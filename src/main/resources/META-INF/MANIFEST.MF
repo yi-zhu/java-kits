@@ -1,0 +1,41 @@
+Manifest-Version: 1.0
+Main-Class: 
+Class-Path: jackson-datatype-jdk8-2.10.1.jar jackson-databind-2.10.1.jar
+  javassist-3.19.0-GA.jar spring-boot-starter-json-2.3.0.M2.jar spring-t
+ x-5.2.3.RELEASE.jar protobuf-java-3.11.4.jar spring-boot-starter-loggin
+ g-2.3.0.M2.jar spring-data-redis-2.3.0.M4.jar freemarker-2.3.29.jar htt
+ pcore-4.4.13.jar fst-2.29.jar commons-pool2-2.8.0.jar commons-lang3-3.9
+ .jar spring-webmvc-5.2.3.RELEASE.jar spring-beans-5.2.3.RELEASE.jar mch
+ ange-commons-java-0.2.10.jar spring-oxm-5.2.3.RELEASE.jar c3p0-0.9.5.1.
+ jar spring-boot-starter-2.3.0.M2.jar logback-classic-1.2.3.jar jul-to-s
+ lf4j-1.7.30.jar log4j-api-2.13.0.jar spring-expression-5.2.3.RELEASE.ja
+ r objenesis-2.1.jar druid-1.1.21.jar jetty-io-9.4.24.v20191120.jar asm-
+ tree-7.2.jar jetty-http-9.4.24.v20191120.jar snakeyaml-1.25.jar jackson
+ -core-2.10.1.jar asm-7.2.jar logback-core-1.2.3.jar spring-boot-2.3.0.M
+ 2.jar websocket-common-9.4.24.v20191120.jar spring-boot-configuration-p
+ rocessor-2.3.0.M2.jar slf4j-api-1.7.30.jar jetty-util-9.4.24.v20191120.
+ jar jackson-module-parameter-names-2.10.1.jar spring-boot-starter-freem
+ arker-2.3.0.M2.jar commons-codec-1.14.jar mysql-connector-java-8.0.19.j
+ ar jetty-annotations-9.4.24.v20191120.jar spring-web-5.2.3.RELEASE.jar 
+ spring-boot-starter-websocket-2.3.0.M2.jar websocket-api-9.4.24.v201911
+ 20.jar spring-messaging-5.2.3.RELEASE.jar jetty-security-9.4.24.v201911
+ 20.jar spring-data-commons-2.3.0.M3.jar jetty-servlet-9.4.24.v20191120.
+ jar websocket-servlet-9.4.24.v20191120.jar javax-websocket-server-impl-
+ 9.4.24.v20191120.jar jedis-3.2.0.jar asm-commons-7.2.jar httpclient-4.5
+ .12.jar jetty-jndi-9.4.24.v20191120.jar spring-data-keyvalue-2.3.0.M3.j
+ ar spring-core-5.2.3.RELEASE.jar jakarta.el-3.0.3.jar websocket-server-
+ 9.4.24.v20191120.jar fastjson-1.2.66.jar jakarta.websocket-api-1.1.2.ja
+ r spring-aop-5.2.3.RELEASE.jar commons-net-3.6.jar asm-analysis-7.2.jar
+  spring-websocket-5.2.3.RELEASE.jar jetty-plus-9.4.24.v20191120.jar web
+ socket-client-9.4.24.v20191120.jar spring-context-support-5.2.3.RELEASE
+ .jar jetty-servlets-9.4.24.v20191120.jar jetty-webapp-9.4.24.v20191120.
+ jar jetty-client-9.4.24.v20191120.jar postgresql-42.2.11.jre7.jar sprin
+ g-boot-starter-web-2.3.0.M2.jar spring-jcl-5.2.3.RELEASE.jar jetty-xml-
+ 9.4.24.v20191120.jar jackson-datatype-jsr310-2.10.1.jar spring-boot-aut
+ oconfigure-2.3.0.M2.jar jakarta.annotation-api-1.3.5.jar log4j-1.2.17.j
+ ar jetty-continuation-9.4.24.v20191120.jar jakarta.servlet-api-4.0.3.ja
+ r log4j-to-slf4j-2.13.0.jar netty-all-4.1.43.Final.jar json-20190722.ja
+ r spring-context-5.2.3.RELEASE.jar spring-boot-starter-jetty-2.3.0.M2.j
+ ar jetty-server-9.4.24.v20191120.jar javax-websocket-client-impl-9.4.24
+ .v20191120.jar gson-2.8.6.jar jackson-annotations-2.10.1.jar
+
