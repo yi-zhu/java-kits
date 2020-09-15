@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.stat.ast;
 
@@ -24,44 +10,7 @@ import space.yizhu.record.template.stat.Location;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * Switch
- *
- * #switch 指令与 Java 12 switch 新特性的设计相似: http://openjdk.java.net/jeps/325
- *
- * 在与 java 老版本指令基本用法相同的基础上，主要变化与特性有：
- * 1: 移除 java 语法中的 fall-through semantics，即不需要 break 关键字进行断开
- * 2: 不引入 #break 指令，代码更少、更优雅
- * 3: #case 参数可使用多个用逗号分隔的表达式，每个表达式求值后与 #switch 参数求值后比较，
- *    从根本上消除了 #break 指令的必要性
- * 4: #case 支持任意类型数据与表达式（java 语言只支持少数常量类型）
- *
- * <pre>
- * 示例：
- *   #switch (month)
- *     #case (1, 3, 5, 7, 8, 10, 12)
- *       #(month) 月有 31 天
- *     #case (2)
- *       #(month) 月平年有28天，闰年有29天
- *     #default
- *       月份错误: #(month ?? "null")
- *   #end
- *
- * 如上代码所示，如果 #case 指令参数有多个值，那么可以用逗号分隔，
- * 上述逗号表达式的值 1, 3, 5, 7, 8, 10, 12 之中只要有一个与
- * switch 指令参数 month 相等的话，该 case 分支就会被执行，
- * 该特性从根本上消灭了 #break 指令的必要性
- *
- *
- * 除了常量值以外 #case 参数还可以是任意表达式
- * 例如：
- *     #case (a, b, c, x + y, obj.method(z))
- *
- * 上述代码中 #case 参数中的所有表达式先会被求值，然后逐一与 #switch
- * 参数进行对比，同样也是只要有一个对比相等，则该 case 分支就会被执行
- *
- * </pre>
- */
+
 public class Switch extends Stat implements CaseSetter {
 
     private Expr expr;

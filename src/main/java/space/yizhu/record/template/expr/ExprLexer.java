@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr;
 
@@ -26,9 +12,7 @@ import space.yizhu.record.template.stat.Location;
 import space.yizhu.record.template.stat.ParaToken;
 import space.yizhu.record.template.stat.ParseException;
 
-/**
- * ExprLexer
- */
+
 class ExprLexer {
 
     static final char EOF = (char) -1;
@@ -85,9 +69,7 @@ class ExprLexer {
         return tokens;
     }
 
-    /**
-     * 扫描 ID true false null
-     */
+    
     boolean scanId() {
         if (state != 0) {
             return false;
@@ -115,14 +97,7 @@ class ExprLexer {
         return prepareNextScan();
     }
 
-    /**
-     * + - * / % ++ --
-     * = == != < <= > >=
-     * ! && ||
-     * ? ?: ?!
-     * . .. : :: , ;
-     * ( ) [ ] { }
-     */
+    
     boolean scanOperator() {
         if (state != 100) {
             return false;
@@ -130,7 +105,7 @@ class ExprLexer {
 
         Tok tok;
         switch (peek()) {
-            case '+':        // + - * / % ++ --
+            case '+':        
                 if (next() == '+') {
                     tok = new Tok(Sym.INC, beginRow);
                     next();
@@ -158,7 +133,7 @@ class ExprLexer {
                 tok = new Tok(Sym.MOD, beginRow);
                 next();
                 return ok(tok);
-            case '=':        // = == != < <= > >=
+            case '=':        
                 if (next() == '=') {
                     tok = new Tok(Sym.EQUAL, beginRow);
                     next();
@@ -190,7 +165,7 @@ class ExprLexer {
                     tok = new Tok(Sym.GT, beginRow);
                 }
                 return ok(tok);
-            case '&':        // ! && ||
+            case '&':        
                 if (next() == '&') {
                     tok = new Tok(Sym.AND, beginRow);
                     next();
@@ -206,7 +181,7 @@ class ExprLexer {
                     throw new ParseException("Unsupported operator: '|'", location);
                 }
                 return ok(tok);
-            case '?':        // ? ??
+            case '?':        
                 if (next() == '?') {
                     tok = new Tok(Sym.NULL_SAFE, beginRow);
                     next();
@@ -214,7 +189,7 @@ class ExprLexer {
                     tok = new Tok(Sym.QUESTION, beginRow);
                 }
                 return ok(tok);
-            case '.':        // . .. : :: , ;
+            case '.':        
                 if (next() == '.') {
                     tok = new Tok(Sym.RANGE, beginRow);
                     next();
@@ -238,7 +213,7 @@ class ExprLexer {
                 tok = new Tok(Sym.SEMICOLON, beginRow);
                 next();
                 return ok(tok);
-            case '(':        // ( ) [ ] { }
+            case '(':        
                 tok = new Tok(Sym.LPAREN, beginRow);
                 next();
                 return ok(tok);
@@ -284,7 +259,7 @@ class ExprLexer {
 
         for (char c = next(); true; c = next()) {
             if (c == quotes) {
-                if (buf[forward - 1] != '\\') {    // 前一个字符不是转义字符
+                if (buf[forward - 1] != '\\') {    
                     StringBuilder sb = subBuf(lexemeBegin + 1, forward - 1);
                     String str;
                     if (sb != null) {
@@ -322,29 +297,29 @@ class ExprLexer {
             return fail();
         }
 
-        int numStart = lexemeBegin;                // forward;
-        int radix = 10;                            // 10 进制
+        int numStart = lexemeBegin;                
+        int radix = 10;                            
         if (c == '0') {
             c = next();
             if (c == 'X' || c == 'x') {
-                radix = 16;                        // 16 进制
+                radix = 16;                        
                 c = next();
                 numStart = numStart + 2;
             } else if (c != '.') {
-                radix = 8;                        // 8 进制
-                // numStart = numStart + 1;		// 8 进制不用去掉前缀 0，可被正确转换，去除此行便于正确处理数字 0
+                radix = 8;                        
+                
             }
         }
 
         c = skipDigit(radix);
         Sym sym = null;
-        if (c == '.') {                            // 以 '.' 字符结尾是合法的浮点数
+        if (c == '.') {                            
             next();
-            if (peek() == '.' ||                // 处理 [0..9] 这样的表达式
-                    CharTable.isLetter(peek())) {    // 处理 123.toInt() 这样的表达式，1.2.toInt() 及 1D.toInt() 可正常处理
+            if (peek() == '.' ||                
+                    CharTable.isLetter(peek())) {    
                 StringBuilder n = subBuf(numStart, forward - 2);
-                if (n == null /* && radix == 16 */) {
-                    // 16 进制数格式错误，前缀 0x 后缺少 16 进制数字(16 进制时 numStart 已增加了 2， n 为 null 必是 16 进制解析出错)
+                if (n == null ) {
+                    
                     throw new ParseException("Error hex format", location);
                 }
                 NumTok tok = new NumTok(Sym.INT, n.toString(), radix, false, location);
@@ -353,30 +328,30 @@ class ExprLexer {
                 return prepareNextScan();
             }
 
-            sym = Sym.DOUBLE;                    // 浮点型默认为 double
+            sym = Sym.DOUBLE;                    
             c = skipDigit(radix);
         }
 
         boolean isScientificNotation = false;
-        if (c == 'E' || c == 'e') {                // scientific notation 科学计数法
+        if (c == 'E' || c == 'e') {                
             c = next();
             if (c == '+' || c == '-') {
                 c = next();
             }
             if (!CharTable.isDigit(c)) {
-                // 科学计数法后面缺少数字
+                
                 throw new ParseException("Error scientific notation format", location);
             }
             isScientificNotation = true;
-            sym = Sym.DOUBLE;                    // 科学计数法默认类型为 double
+            sym = Sym.DOUBLE;                    
 
-            c = skipDecimalDigit();                // 科学计数法的指数部分是十进制
+            c = skipDecimalDigit();                
         }
 
         StringBuilder num;
         if (c == 'L' || c == 'l') {
             if (sym == Sym.DOUBLE) {
-                // 浮点类型不能使用 'L' 或 'l' 后缀
+                
                 throw new ParseException("Error float format", location);
             }
             sym = Sym.LONG;
@@ -397,11 +372,11 @@ class ExprLexer {
             num = subBuf(numStart, forward - 1);
         }
         if (errorFollow()) {
-            // "错误的表达式元素 : " + num + peek()
+            
             throw new ParseException("Error expression: " + num + peek(), location);
         }
-        if (num == null /* && radix == 16 */) {
-            // 16 进制数格式错误，前缀 0x 后缺少 16 进制数字
+        if (num == null ) {
+            
             throw new ParseException("Error hex format", location);
         }
 
@@ -474,9 +449,7 @@ class ExprLexer {
         return buf[forward];
     }
 
-    /**
-     * 表达式词法分析需要跳过换行与回车
-     */
+    
     void skipBlanks() {
         while (CharTable.isBlankOrLineFeed(buf[forward])) {
             next();

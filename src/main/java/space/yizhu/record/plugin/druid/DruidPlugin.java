@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.druid;
 
@@ -27,41 +13,34 @@ import space.yizhu.kits.StrKit;
 import space.yizhu.record.plugin.IPlugin;
 import space.yizhu.record.plugin.activerecord.IDataSourceProvider;
 
-/**
- * DruidPlugin.
- */
+
 public class DruidPlugin implements IPlugin, IDataSourceProvider {
-    //连接池的名称
+    
     private String name = null;
 
-    // 基本属性 url、user、password
+    
     private String url;
     private String username;
     private String password;
     private String publicKey;
-    private String driverClass = null;    // 由 "com.mysql.jdbc.Driver" 改为 null 让 druid 自动探测 driverClass 值
+    private String driverClass = null;    
 
-    // 初始连接池大小、最小空闲连接数、最大活跃连接数
+    
     private int initialSize = 1;
     private int minIdle = 10;
     private int maxActive = 32;
 
-    // 配置获取连接等待超时的时间
+    
     private long maxWait = DruidDataSource.DEFAULT_MAX_WAIT;
 
-    // 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    
     private long timeBetweenEvictionRunsMillis = DruidDataSource.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS;
-    // 配置连接在池中最小生存的时间
+    
     private long minEvictableIdleTimeMillis = DruidDataSource.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS;
-    // 配置发生错误时多久重连
+    
     private long timeBetweenConnectErrorMillis = DruidDataSource.DEFAULT_TIME_BETWEEN_CONNECT_ERROR_MILLIS;
 
-    /**
-     * hsqldb - "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS"
-     * Oracle - "select 1 from dual"
-     * DB2 - "select 1 from sysibm.sysdummy1"
-     * mysql - "select 1"
-     */
+    
     private String validationQuery = "select 1";
     private String connectionInitSql = null;
     private String connectionProperties = null;
@@ -69,21 +48,21 @@ public class DruidPlugin implements IPlugin, IDataSourceProvider {
     private boolean testOnBorrow = false;
     private boolean testOnReturn = false;
 
-    // 是否打开连接泄露自动检测
+    
     private boolean removeAbandoned = false;
-    // 连接长时间没有使用，被认为发生泄露时长
+    
     private long removeAbandonedTimeoutMillis = 300 * 1000;
-    // 发生泄露时是否需要输出 log，建议在开启连接泄露检测时开启，方便排错
+    
     private boolean logAbandoned = false;
 
-    // 是否缓存preparedStatement，即PSCache，对支持游标的数据库性能提升巨大，如 oracle、mysql 5.5 及以上版本
-    // private boolean poolPreparedStatements = false;	// oracle、mysql 5.5 及以上版本建议为 true;
+    
+    
 
-    // 只要maxPoolPreparedStatementPerConnectionSize>0,poolPreparedStatements就会被自动设定为true，使用oracle时可以设定此值。
+    
     private int maxPoolPreparedStatementPerConnectionSize = -1;
 
-    // 配置监控统计拦截的filters
-    private String filters;    // 监控统计："stat"    防SQL注入："wall"     组合使用： "stat,wall"
+    
+    private String filters;    
     private List<Filter> filterList;
 
     private DruidDataSource ds;
@@ -113,13 +92,7 @@ public class DruidPlugin implements IPlugin, IDataSourceProvider {
         this.validationQuery = autoCheckValidationQuery(url);
     }
 
-    /**
-     * @Title: autoCheckValidationQuery
-     * @Description: 自动设定探测sql
-     * @param url
-     * @return
-     * @since V1.0.0
-     */
+    
     private static String autoCheckValidationQuery(String url) {
         if (url.startsWith("jdbc:oracle")) {
             return "select 1 from dual";
@@ -133,10 +106,7 @@ public class DruidPlugin implements IPlugin, IDataSourceProvider {
         return "select 1";
     }
 
-    /**
-     * 添加连接时的初始化sql。可以添加多次，在初次连接时使用，比如指定编码或者默认scheme等
-     * @param sql
-     */
+    
     public void setConnectionInitSql(String sql) {
         this.connectionInitSql = sql;
     }
@@ -145,23 +115,12 @@ public class DruidPlugin implements IPlugin, IDataSourceProvider {
         return name;
     }
 
-    /**
-     * 连接池名称
-     *
-     * @param name
-     */
+    
     public final void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * 设置过滤器，如果要开启监控统计需要使用此方法或在构造方法中进行设置
-     * <p>
-     * 监控统计："stat"
-     * 防SQL注入："wall"
-     * 组合使用： "stat,wall"
-     * </p>
-     */
+    
     public DruidPlugin setFilters(String filters) {
         this.filters = filters;
         return this;
@@ -209,16 +168,16 @@ public class DruidPlugin implements IPlugin, IDataSourceProvider {
         ds.setRemoveAbandonedTimeoutMillis(removeAbandonedTimeoutMillis);
         ds.setLogAbandoned(logAbandoned);
 
-        //只要maxPoolPreparedStatementPerConnectionSize>0,poolPreparedStatements就会被自动设定为true，参照druid的源码
+        
         ds.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);
 
         boolean hasSetConnectionProperties = false;
         if (StrKit.notBlank(filters)) {
             try {
                 ds.setFilters(filters);
-                //支持加解密数据库
+                
                 if (filters.contains("config")) {
-                    //判断是否设定了公钥
+                    
                     if (StrKit.isBlank(this.publicKey)) {
                         throw new RuntimeException("Druid连接池的filter设定了config时，必须设定publicKey");
                     }
@@ -236,7 +195,7 @@ public class DruidPlugin implements IPlugin, IDataSourceProvider {
                 throw new RuntimeException(e);
             }
         }
-        //确保setConnectionProperties被调用过一次
+        
         if (!hasSetConnectionProperties && StrKit.notBlank(this.connectionProperties)) {
             ds.setConnectionProperties(this.connectionProperties);
         }
@@ -318,12 +277,7 @@ public class DruidPlugin implements IPlugin, IDataSourceProvider {
         return this;
     }
 
-    /**
-     * hsqldb - "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS"
-     * Oracle - "select 1 from dual"
-     * DB2 - "select 1 from sysibm.sysdummy1"
-     * mysql - "select 1"
-     */
+    
     public DruidPlugin setValidationQuery(String validationQuery) {
         this.validationQuery = validationQuery;
         return this;

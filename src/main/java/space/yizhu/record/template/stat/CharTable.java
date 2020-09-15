@@ -1,26 +1,8 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.stat;
 
-/**
- * CharTable 空间换时间优化字符判断性能
- * 负值参数强转 char 会自动变正值，无需判断负值数组下标
- * isLetter(EOF) 不会下标越界
- */
+
 public class CharTable {
 
     private static final char[] letterChars = buildLetterChars();
@@ -48,7 +30,7 @@ public class CharTable {
         for (char i = 'A'; i <= 'Z'; i++) {
             ret[i] = i;
         }
-        ret['_'] = '_';            // 包含下划线字符 '_'
+        ret['_'] = '_';            
         return ret;
     }
 
@@ -95,11 +77,11 @@ public class CharTable {
     }
 
     public static boolean isBlank(char c) {
-        return c == ' ' || c == '\t';                                // \t\r\u000C
+        return c == ' ' || c == '\t';                                
     }
 
     public static boolean isBlankOrLineFeed(char c) {
-        return c == ' ' || c == '\t' || c == '\r' || c == '\n';        // \t\r\n\u000C
+        return c == ' ' || c == '\t' || c == '\r' || c == '\n';        
     }
 
     public static boolean isHexadecimalDigit(char c) {

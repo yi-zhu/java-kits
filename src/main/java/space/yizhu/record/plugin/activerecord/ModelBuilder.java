@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord;
 
@@ -29,9 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * ModelBuilder.
- */
+
 public class ModelBuilder {
 
     public static final ModelBuilder me = new ModelBuilder();
@@ -86,7 +70,7 @@ public class ModelBuilder {
             is = blob.getBinaryStream();
             if (is == null)
                 return null;
-            byte[] data = new byte[(int) blob.length()];        // byte[] data = new byte[is.available()];
+            byte[] data = new byte[(int) blob.length()];        
             if (data.length == 0)
                 return null;
             is.read(data);
@@ -129,59 +113,8 @@ public class ModelBuilder {
         }
     }
 	
-	/* backup before use columnType
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	static final <T> List<T> build(ResultSet rs, Class<? extends Model> modelClass) throws SQLException, ReflectiveOperationException {
-		List<T> result = new ArrayList<T>();
-		ResultSetMetaData rsmd = rs.getMetaData();
-		int columnCount = rsmd.getColumnCount();
-		String[] labelNames = getLabelNames(rsmd, columnCount);
-		while (rs.next()) {
-			Model<?> ar = modelClass.newInstance();
-			Map<String, Object> attrs = ar.getAttrs();
-			for (int i=1; i<=columnCount; i++) {
-				Object attrValue = rs.getObject(i);
-				attrs.put(labelNames[i], attrValue);
-			}
-			result.add((T)ar);
-		}
-		return result;
-	}
 	
-	private static final String[] getLabelNames(ResultSetMetaData rsmd, int columnCount) throws SQLException {
-		String[] result = new String[columnCount + 1];
-		for (int i=1; i<=columnCount; i++)
-			result[i] = rsmd.getColumnLabel(i);
-		return result;
-	}
-	*/
 	
-	/* backup
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	static final <T> List<T> build(ResultSet rs, Class<? extends Model> modelClass) throws SQLException, ReflectiveOperationException {
-		List<T> result = new ArrayList<T>();
-		ResultSetMetaData rsmd = rs.getMetaData();
-		List<String> labelNames = getLabelNames(rsmd);
-		while (rs.next()) {
-			Model<?> ar = modelClass.newInstance();
-			Map<String, Object> attrs = ar.getAttrs();
-			for (String lableName : labelNames) {
-				Object attrValue = rs.getObject(lableName);
-				attrs.put(lableName, attrValue);
-			}
-			result.add((T)ar);
-		}
-		return result;
-	}
 	
-	private static final List<String> getLabelNames(ResultSetMetaData rsmd) throws SQLException {
-		int columCount = rsmd.getColumnCount();
-		List<String> result = new ArrayList<String>();
-		for (int i=1; i<=columCount; i++) {
-			result.add(rsmd.getColumnLabel(i));
-		}
-		return result;
-	}
-	*/
 }
 

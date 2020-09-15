@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.ext.directive;
 
@@ -31,29 +17,7 @@ import space.yizhu.record.template.expr.ast.ExprList;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * #number 数字格式化输出指令
- *
- * 两种用法：
- * 1：#number(n) 用默认 pattern 输出变量中的值
- * 2：#number(n, "#.##") 用第二个参数指定的 pattern 输出变量中的值
- *
- * 注意：
- * 1：pattern 的使用与 java.text.DecimalFormat 的完全一样
- *    在拿不定主意的时候可以在搜索引擎中搜索关键字：DecimalFormat
- * 2：#number 指令中的参数可以是变量，例如：#number(n, p) 中的 n 与 p 可以全都是变量
- *
- * <pre>
- * 示例：
- * #number(3.1415926, "#.##")
- * #number(0.9518, "#.##%")
- * #number(300000, "光速为每秒 ,### 公里。")
- *
- * #set(n = 1.234)
- * #set(p = "#.##")
- * #number(n, p)
- * </pre>
- */
+
 public class NumberDirective extends Directive {
 
     private Expr valueExpr;

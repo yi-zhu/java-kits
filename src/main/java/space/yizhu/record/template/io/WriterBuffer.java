@@ -1,30 +1,14 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.io;
 
-/**
- * WriterBuffer
- */
+
 public class WriterBuffer {
 
-    private static final int MIN_BUFFER_SIZE = 64;                    // 缓冲区最小 64 字节
-    private static final int MAX_BUFFER_SIZE = 1024 * 1024 * 10;        // 缓冲区最大 10M 字节
+    private static final int MIN_BUFFER_SIZE = 64;                    
+    private static final int MAX_BUFFER_SIZE = 1024 * 1024 * 10;        
 
-    private int bufferSize = 2048;                                    // 缓冲区大小
+    private int bufferSize = 2048;                                    
 
     private EncoderFactory encoderFactory = new EncoderFactory();
 

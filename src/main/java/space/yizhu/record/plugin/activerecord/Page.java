@@ -1,45 +1,22 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord;
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Page is the result of Model.paginate(......) or Db.paginate(......)
- */
+
 public class Page<T> implements Serializable {
 
     private static final long serialVersionUID = -7102129155309986923L;
 
-    private List<T> list;                // list result of this page
-    private int pageNumber;                // page number
-    private int pageSize;                // result amount of this page
-    private int totalPage;                // total page
-    private int totalRow;                // total row
+    private List<T> list;                
+    private int pageNumber;                
+    private int pageSize;                
+    private int totalPage;                
+    private int totalRow;                
 
-    /**
-     * Constructor.
-     * @param list the list of paginate result
-     * @param pageNumber the page number
-     * @param pageSize the page size
-     * @param totalPage the total page of paginate
-     * @param totalRow the total row of paginate
-     */
+    
     public Page(List<T> list, int pageNumber, int pageSize, int totalPage, int totalRow) {
         this.list = list;
         this.pageNumber = pageNumber;
@@ -52,9 +29,7 @@ public class Page<T> implements Serializable {
 
     }
 
-    /**
-     * Return list of this page.
-     */
+    
     public List<T> getList() {
         return list;
     }
@@ -63,9 +38,7 @@ public class Page<T> implements Serializable {
         this.list = list;
     }
 
-    /**
-     * Return page number.
-     */
+    
     public int getPageNumber() {
         return pageNumber;
     }
@@ -74,9 +47,7 @@ public class Page<T> implements Serializable {
         this.pageNumber = pageNumber;
     }
 
-    /**
-     * Return page size.
-     */
+    
     public int getPageSize() {
         return pageSize;
     }
@@ -85,9 +56,7 @@ public class Page<T> implements Serializable {
         this.pageSize = pageSize;
     }
 
-    /**
-     * Return total page.
-     */
+    
     public int getTotalPage() {
         return totalPage;
     }
@@ -96,9 +65,7 @@ public class Page<T> implements Serializable {
         this.totalPage = totalPage;
     }
 
-    /**
-     * Return total row.
-     */
+    
     public int getTotalRow() {
         return totalRow;
     }

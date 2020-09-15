@@ -6,13 +6,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Inject is used to inject dependent object
- */
+
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Inject {
-    Class<?> value() default Void.class;                    // 被注入类的类型
+    Class<?> value() default Void.class;                    
 }
 

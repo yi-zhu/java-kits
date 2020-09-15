@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord.dialect;
 
@@ -31,9 +17,7 @@ import space.yizhu.record.plugin.activerecord.Table;
 import space.yizhu.record.plugin.activerecord.builder.TimestampProcessedModelBuilder;
 import space.yizhu.record.plugin.activerecord.builder.TimestampProcessedRecordBuilder;
 
-/**
- * PostgreSqlDialect.
- */
+
 public class PostgreSqlDialect extends Dialect {
 
     public PostgreSqlDialect() {
@@ -221,12 +205,7 @@ public class PostgreSqlDialect extends Dialect {
         fillStatementHandleDateType(pst, paras);
     }
 
-    /**
-     * 解决 PostgreSql 获取自增主键时 rs.getObject(1) 总是返回第一个字段的值，而非返回了 id 值
-     * issue: https://www.oschina.net/question/2312705_2243354
-     *
-     * 相对于 Dialect 中的默认实现，仅将 rs.getXxx(1) 改成了 rs.getXxx(pKey)
-     */
+    
     public void getModelGeneratedKey(Model<?> model, PreparedStatement pst, Table table) throws SQLException {
         String[] pKeys = table.getPrimaryKey();
         ResultSet rs = pst.getGeneratedKeys();
@@ -251,12 +230,7 @@ public class PostgreSqlDialect extends Dialect {
         rs.close();
     }
 
-    /**
-     * 解决 PostgreSql 获取自增主键时 rs.getObject(1) 总是返回第一个字段的值，而非返回了 id 值
-     * issue: https://www.oschina.net/question/2312705_2243354
-     *
-     * 相对于 Dialect 中的默认实现，仅将 rs.getXxx(1) 改成了 rs.getXxx(pKey)
-     */
+    
     public void getRecordGeneratedKey(PreparedStatement pst, Record record, String[] pKeys) throws SQLException {
         ResultSet rs = pst.getGeneratedKeys();
         for (String pKey : pKeys) {

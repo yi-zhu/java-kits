@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr.ast;
 
@@ -33,9 +19,7 @@ import space.yizhu.record.template.ext.extensionmethod.LongExt;
 import space.yizhu.record.template.ext.extensionmethod.ShortExt;
 import space.yizhu.record.template.ext.extensionmethod.StringExt;
 
-/**
- * MethodKit
- */
+
 public class MethodKit {
 
     private static final Class<?>[] NULL_ARG_TYPES = new Class<?>[0];
@@ -44,7 +28,7 @@ public class MethodKit {
     private static final Map<Class<?>, Class<?>> primitiveMap = new HashMap<Class<?>, Class<?>>(64);
     private static final SyncWriteMap<Long, Object> methodCache = new SyncWriteMap<Long, Object>(2048, 0.25F);
 
-    // 初始化在模板中调用 method 时所在的被禁止使用类
+    
     static {
         Class<?>[] cs = {
                 System.class, Runtime.class, Thread.class, Class.class, ClassLoader.class, File.class,
@@ -57,11 +41,11 @@ public class MethodKit {
         }
     }
 
-    // 初始化在模板中被禁止使用的 method name
+    
     static {
         String[] ms = {
                 "getClass", "getDeclaringClass", "forName", "newInstance", "getClassLoader",
-                "invoke", // "getMethod", "getMethods", // "getField", "getFields",
+                "invoke", 
                 "notify", "notifyAll", "wait",
                 "load", "exit", "loadLibrary", "halt",
                 "stop", "suspend", "resume", "setDaemon", "setPriority",
@@ -71,7 +55,7 @@ public class MethodKit {
         }
     }
 
-    // 初始化 primitive type 与 boxed type 双向映射关系
+    
     static {
         primitiveMap.put(byte.class, Byte.class);
         primitiveMap.put(short.class, Short.class);
@@ -125,29 +109,14 @@ public class MethodKit {
             if (method != null) {
                 methodCache.putIfAbsent(key, method);
             } else {
-                // 对于不存在的 Method，只进行一次获取操作，主要为了支持 null safe，未来需要考虑内存泄漏风险
+                
                 methodCache.putIfAbsent(key, Void.class);
             }
         }
         return method instanceof MethodInfo ? (MethodInfo) method : null;
     }
 
-    /**
-     * 获取 getter 方法
-     * 使用与 Field 相同的 key，避免生成两次 key值
-     * ---> jfinal 3.5 已将此功能转移至 FieldKit
-     public static MethodInfo getGetterMethod(Long key, Class<?> targetClass, String methodName) {
-     Object getterMethod = methodCache.get(key);
-     if (getterMethod == null) {
-     getterMethod = doGetMethod(key, targetClass, methodName, NULL_ARG_TYPES);
-     if (getterMethod != null) {
-     methodCache.putIfAbsent(key, getterMethod);
-     } else {
-     methodCache.putIfAbsent(key, Void.class);
-     }
-     }
-     return getterMethod instanceof MethodInfo ? (MethodInfo)getterMethod : null;
-     } */
+    
 
     static Class<?>[] getArgTypes(Object[] argValues) {
         if (argValues == null || argValues.length == 0) {
@@ -164,16 +133,16 @@ public class MethodKit {
         if (forbiddenClasses.contains(targetClass)) {
             throw new RuntimeException("Forbidden class: " + targetClass.getName());
         }
-        // 仅开启 forbiddenClasses 检测
-        // if (forbiddenMethods.contains(methodName)) {
-        // 	throw new RuntimeException("Forbidden method: " + methodName);
-        // }
+        
+        
+        
+        
 
         Method[] methodArray = targetClass.getMethods();
         for (Method method : methodArray) {
             if (method.getName().equals(methodName)) {
                 Class<?>[] paraTypes = method.getParameterTypes();
-                if (matchFixedArgTypes(paraTypes, argTypes)) {    // 无条件优先匹配固定参数方法
+                if (matchFixedArgTypes(paraTypes, argTypes)) {    
                     return new MethodInfo(key, targetClass, method);
                 }
                 if (method.isVarArgs() && matchVarArgTypes(paraTypes, argTypes)) {
@@ -202,7 +171,7 @@ public class MethodKit {
             if (paraTypes[i].isAssignableFrom(argTypes[i])) {
                 continue;
             }
-            // object instanceof Xxx、Class.isAssignableFrom(Class)、Class.isInstance(Object) not works for primitive type
+            
             if (paraTypes[i] == argTypes[i] || primitiveMap.get(paraTypes[i]) == argTypes[i]) {
                 continue;
             }
@@ -239,16 +208,14 @@ public class MethodKit {
         return true;
     }
 
-    /**
-     * 获取方法用于缓存的 key
-     */
+    
     private static Long getMethodKey(Class<?> targetClass, String methodName, Class<?>[] argTypes) {
         return MethodKeyBuilder.instance.getMethodKey(targetClass, methodName, argTypes);
     }
 
-    // 以下代码实现 extension method 功能 --------------------
+    
 
-    // 添加 jfinal 官方扩展方法 extension method
+    
     static {
         addExtensionMethod(String.class, new StringExt());
         addExtensionMethod(Integer.class, new IntegerExt());
@@ -264,7 +231,7 @@ public class MethodKit {
         java.lang.reflect.Method[] methodArray = extensionClass.getMethods();
         for (java.lang.reflect.Method method : methodArray) {
             Class<?> decClass = method.getDeclaringClass();
-            if (decClass == Object.class) {        // 考虑用于优化路由生成那段代码
+            if (decClass == Object.class) {        
                 continue;
             }
 
@@ -274,7 +241,7 @@ public class MethodKit {
                 throw new RuntimeException(buildMethodSignatureForException("Extension method requires at least one argument: " + extensionClass.getName() + ".", methodName, extensionMethodParaTypes));
             }
 
-            // Extension method 第一个参数必须与当前对象的类型一致，在调用时会将当前对象自身传给扩展方法的第一个参数
+            
             if (targetClass != extensionMethodParaTypes[0]) {
                 throw new RuntimeException(buildMethodSignatureForException("The first argument type of : " + extensionClass.getName() + ".", methodName, extensionMethodParaTypes) + " must be: " + targetClass.getName());
             }
@@ -287,13 +254,13 @@ public class MethodKit {
                 if (error != null) {
                     throw new RuntimeException("Extension method \"" + methodName + "\" is already exists in class \"" + targetClass.getName() + "\"");
                 }
-            } catch (NoSuchMethodException e) {        // Method 找不到才能添加该扩展方法
+            } catch (NoSuchMethodException e) {        
                 Long key = MethodKit.getMethodKey(targetClass, methodName, toBoxedType(targetParaTypes));
                 if (methodCache.containsKey(key)) {
                     throw new RuntimeException(buildMethodSignatureForException("The extension method is already exists: " + extensionClass.getName() + ".", methodName, targetParaTypes));
                 }
 
-                MethodInfoExt mie = new MethodInfoExt(objectOfExtensionClass, key, extensionClass/* targetClass */, method);
+                MethodInfoExt mie = new MethodInfoExt(objectOfExtensionClass, key, extensionClass, method);
                 methodCache.putIfAbsent(key, mie);
             }
         }
@@ -308,7 +275,7 @@ public class MethodKit {
         java.lang.reflect.Method[] methodArray = extensionClass.getMethods();
         for (java.lang.reflect.Method method : methodArray) {
             Class<?> decClass = method.getDeclaringClass();
-            if (decClass == Object.class) {        // 考虑用于优化路由生成那段代码
+            if (decClass == Object.class) {        
                 continue;
             }
 
@@ -324,7 +291,7 @@ public class MethodKit {
 
     private static final Map<Class<?>, Class<?>> primitiveToBoxedMap = new HashMap<Class<?>, Class<?>>(64);
 
-    // 初始化 primitive type 到 boxed type 的映射
+    
     static {
         primitiveToBoxedMap.put(byte.class, Byte.class);
         primitiveToBoxedMap.put(short.class, Short.class);
@@ -336,14 +303,7 @@ public class MethodKit {
         primitiveToBoxedMap.put(boolean.class, Boolean.class);
     }
 
-    /**
-     * 由于从在模板中传递的基本数据类型参数只可能是 boxed 类型，当 extension method 中的方法参数是
-     * primitive 类型时，在 getMethod(key) 时无法获取 addExtensionMethod(...) 注册的扩展方法
-     * 所以为扩展方法调用 getMethodKey(...) 生成 key 时一律转成 boxed 类型去生成方法的 key 值
-     *
-     * 注意：该值仅用于在获取方法是通过 key 能获取到 MethindInfoExt，而 MethindInfoExt.paraType 仍然
-     *      是原来的参数值
-     */
+    
     private static Class<?>[] toBoxedType(Class<?>[] targetParaTypes) {
         int len = targetParaTypes.length;
         if (len == 0) {

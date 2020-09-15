@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord;
 
@@ -24,22 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * DbKit
- */
+
 @SuppressWarnings("rawtypes")
 public final class DbKit {
 
-    /**
-     * The main Config object for system
-     */
+    
     static Config config = null;
 
-    /**
-     * 1: For ActiveRecordPlugin.useAsDataTransfer(...) 用于分布式场景
-     * 2: For Model.getAttrsMap()/getModifyFlag() and Record.getColumnsMap()
-     * while the ActiveRecordPlugin not start or the Exception throws of HashSessionManager.restorSession(..) by Jetty
-     */
+    
     static Config brokenConfig = Config.createBrokenConfig();
 
     private static Map<Class<? extends Model>, Config> modelToConfig = new HashMap<Class<? extends Model>, Config>(512, 0.5F);
@@ -52,10 +30,7 @@ public final class DbKit {
     private DbKit() {
     }
 
-    /**
-     * Add Config object
-     * @param config the Config contains DataSource, Dialect and so on
-     */
+    
     public static void addConfig(Config config) {
         if (config == null) {
             throw new IllegalArgumentException("Config can not be null");
@@ -66,18 +41,13 @@ public final class DbKit {
 
         configNameToConfig.put(config.getName(), config);
 
-        /**
-         * Replace the main config if current config name is MAIN_CONFIG_NAME
-         */
+        
         if (MAIN_CONFIG_NAME.equals(config.getName())) {
             DbKit.config = config;
             Db.init(DbKit.config.getName());
         }
 
-        /**
-         * The configName may not be MAIN_CONFIG_NAME,
-         * the main config have to set the first comming Config if it is null
-         */
+        
         if (DbKit.config == null) {
             DbKit.config = config;
             Db.init(DbKit.config.getName());
@@ -86,7 +56,7 @@ public final class DbKit {
 
     public static Config removeConfig(String configName) {
         if (DbKit.config != null && DbKit.config.getName().equals(configName)) {
-            // throw new RuntimeException("Can not remove the main config.");
+            
             DbKit.config = null;
         }
 
@@ -143,8 +113,8 @@ public final class DbKit {
 
     @SuppressWarnings("unchecked")
     public static Class<? extends Model> getUsefulClass(Class<? extends Model> modelClass) {
-        // com.demo.blog.Blog$$EnhancerByCGLIB$$69a17158
-        // return (Class<? extends Model>)((modelClass.getName().indexOf("EnhancerByCGLIB") == -1 ? modelClass : modelClass.getSuperclass()));
+        
+        
         return (Class<? extends Model>) (modelClass.getName().indexOf("$$EnhancerBy") == -1 ? modelClass : modelClass.getSuperclass());
     }
 }

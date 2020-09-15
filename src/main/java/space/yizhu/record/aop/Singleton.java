@@ -6,12 +6,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Singleton 用于配置被注入对象是否为单例
- */
+
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Singleton {
-    boolean value();                // 是否单例
+    boolean value();                
 }

@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord;
 
@@ -31,12 +17,7 @@ import space.yizhu.record.plugin.activerecord.dialect.MysqlDialect;
 import space.yizhu.record.template.Engine;
 import space.yizhu.record.template.source.ISource;
 
-/**
- * ActiveRecord plugin.
- * <br>
- * ActiveRecord plugin not support mysql type year, you can use int instead of year. 
- * Mysql error message for type year when insert a record: Data truncated for column 'xxx' at row 1
- */
+
 public class ActiveRecordPlugin implements IPlugin {
 
     protected IDataSourceProvider dataSourceProvider = null;
@@ -132,10 +113,7 @@ public class ActiveRecordPlugin implements IPlugin {
         return getSqlKit().getEngine();
     }
 
-    /**
-     * Set transaction level define in java.sql.Connection
-     * @param transactionLevel only be 0, 1, 2, 4, 8
-     */
+    
     public ActiveRecordPlugin setTransactionLevel(int transactionLevel) {
         config.setTransactionLevel(transactionLevel);
         return this;
@@ -170,7 +148,7 @@ public class ActiveRecordPlugin implements IPlugin {
         }
         config.dialect = dialect;
         if (config.transactionLevel == Connection.TRANSACTION_REPEATABLE_READ && dialect.isOracle()) {
-            // Oracle 不支持 Connection.TRANSACTION_REPEATABLE_READ
+            
             config.transactionLevel = Connection.TRANSACTION_READ_COMMITTED;
         }
         return this;
@@ -192,21 +170,7 @@ public class ActiveRecordPlugin implements IPlugin {
         return this;
     }
 
-    /**
-     * 当使用 create table 语句创建用于开发使用的数据表副本时，假如create table 中使用的
-     * 复合主键次序不同，那么MappingKitGeneretor 反射生成的复合主键次序也会不同。
-     *
-     * 而程序中类似于 model.deleteById(id1, id2) 方法中复合主键次序与需要与映射时的次序
-     * 保持一致，可以在MappingKit 映射完成以后通过调用此方法再次强制指定复合主键次序
-     *
-     * <pre>
-     * Example:
-     * ActiveRecrodPlugin arp = new ActiveRecordPlugin(...);
-     * _MappingKit.mapping(arp);
-     * arp.setPrimaryKey("account_role", "account_id, role_id");
-     * me.add(arp);
-     * </pre>
-     */
+    
     public void setPrimaryKey(String tableName, String primaryKey) {
         for (Table table : tableList) {
             if (table.getName().equalsIgnoreCase(tableName.trim())) {
@@ -240,18 +204,7 @@ public class ActiveRecordPlugin implements IPlugin {
         return true;
     }
 
-    /**
-     * 用于分布式场景，当某个分布式节点只需要用 Model 承载和传输数据，而不需要实际操作数据库时
-     * 调用本方法可保障 IContainerFactory、Dialect、ICache 的一致性
-     *
-     * 本用法更加适用于 Generator 生成的继承自 base model的 Model，更加便于传统第三方工具对
-     * 带有 getter、setter 的 model 进行各种处理
-     *
-     * <pre>
-     * 警告：Dialect、IContainerFactory、ICache 三者一定要与集群中其它节点保持一致，
-     *     以免程序出现不一致行为
-     * </pre>
-     */
+    
     public static void useAsDataTransfer(Dialect dialect, IContainerFactory containerFactory, ICache cache) {
         if (dialect == null) {
             throw new IllegalArgumentException("dialect can not be null");
@@ -270,34 +223,22 @@ public class ActiveRecordPlugin implements IPlugin {
         DbKit.brokenConfig = arp.config;
     }
 
-    /**
-     * 分布式场景下指定 IContainerFactory，并默认使用 MysqlDialect、EhCache
-     * @see #useAsDataTransfer(Dialect, IContainerFactory, ICache)
-     */
+    
     public static void useAsDataTransfer(IContainerFactory containerFactory) {
         useAsDataTransfer(new MysqlDialect(), containerFactory, new EhCache());
     }
 
-    /**
-     * 分布式场景下指定 Dialect、IContainerFactory，并默认使用 EhCache
-     * @see #useAsDataTransfer(Dialect, IContainerFactory, ICache)
-     */
+    
     public static void useAsDataTransfer(Dialect dialect, IContainerFactory containerFactory) {
         useAsDataTransfer(dialect, containerFactory, new EhCache());
     }
 
-    /**
-     * 分布式场景下指定 Dialect、 并默认使用 IContainerFactory.defaultContainerFactory、EhCache
-     * @see #useAsDataTransfer(Dialect, IContainerFactory, ICache)
-     */
+    
     public static void useAsDataTransfer(Dialect dialect) {
         useAsDataTransfer(dialect, IContainerFactory.defaultContainerFactory, new EhCache());
     }
 
-    /**
-     * 分布式场景下默认使用 MysqlDialect、 IContainerFactory.defaultContainerFactory、EhCache
-     * @see #useAsDataTransfer(Dialect, IContainerFactory, ICache)
-     */
+    
     public static void useAsDataTransfer() {
         useAsDataTransfer(new MysqlDialect(), IContainerFactory.defaultContainerFactory, new EhCache());
     }

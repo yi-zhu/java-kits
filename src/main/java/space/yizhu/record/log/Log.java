@@ -1,29 +1,8 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.log;
 
-/**
- * The five logging levels used by Log are (in order):
- * 1. DEBUG (the least serious)
- * 2. INFO
- * 3. WARN
- * 4. ERROR
- * 5. FATAL (the most serious)
- */
+
 public abstract class Log {
 
     private static ILogFactory defaultLogFactory = null;
@@ -37,7 +16,7 @@ public abstract class Log {
             try {
                 Class.forName("org.apache.log4j.Logger");
                 Class<?> log4jLogFactoryClass = Class.forName("space.yizhu.record.log.Log4jLogFactory");
-                defaultLogFactory = (ILogFactory) log4jLogFactoryClass.newInstance();    // return new Log4jLogFactory();
+                defaultLogFactory = (ILogFactory) log4jLogFactoryClass.newInstance();    
             } catch (Exception e) {
             }
         }

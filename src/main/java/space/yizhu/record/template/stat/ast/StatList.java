@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.stat.ast;
 
@@ -24,9 +10,7 @@ import space.yizhu.record.template.io.Writer;
 import space.yizhu.record.template.stat.Ctrl;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * StatList
- */
+
 public class StatList extends Stat {
 
     public static final Stat NULL_STAT = NullStat.me;
@@ -42,14 +26,7 @@ public class StatList extends Stat {
         }
     }
 
-    /**
-     * 持有 StatList 的指令可以通过此方法提升 AST 执行性能
-     * 1：当 statArray.length >  1 时返回 StatList 自身
-     * 2：当 statArray.length == 1 时返回 statArray[0]
-     * 3：其它情况返回 NullStat
-     *
-     * 意义在于，当满足前面两个条件时，避免掉了 StatList.exec(...) 方法中的判断与循环
-     */
+    
     public Stat getActualStat() {
         if (statArray.length > 1) {
             return this;

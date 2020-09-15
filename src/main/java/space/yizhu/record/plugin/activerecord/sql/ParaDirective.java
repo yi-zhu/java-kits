@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord.sql;
 
@@ -38,40 +24,7 @@ import space.yizhu.record.template.io.Writer;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * #para 指令用于在 sql 模板中根据参数名生成问号占位以及查询参数
- *
- * <pre>
- * 一、参数为表达式的用法
- * 1：模板内容
- *   #sql("find")
- *     select * from user where nickName = #para(nickName) and age > #para(age)
- *   #end
- *
- * 2： java 代码
- *   SqlPara sp = getSqlPara("find", Kv.by("nickName", "prettyGirl").set("age", 18));
- *   user.find(sp)
- *   或者：
- *   user.find(sp.getSql(), sp.getPara());
- *
- * 3：以上用法会在 #para(expr) 处生成问号占位字符，并且实际的参数放入 SqlPara 对象的参数列表中
- *   后续可以通过 sqlPara.getPara() 获取到参数并直接用于查询
- *
- *
- * 二、参数为 int 型数字的用法
- * 1：模板内容
- *   #sql("find")
- *     select * from user where id > #para(0) and id < #para(1)
- *   #end
- *
- * 2： java 代码
- *   SqlPara sp = getSqlPara("find", 10, 100);
- *   user.find(sp)
- *
- * 3：以上用法会在 #para(0) 与 #para(1) 处生成问号占位字符，并且将 10、100 这两个参数放入
- *    SqlPara 对象的参数列表中，后续可以通过 sqlPara.getPara() 获取到参数并直接用于查询
- * </pre>
- */
+
 public class ParaDirective extends Directive {
 
     private int index = -1;
@@ -113,8 +66,8 @@ public class ParaDirective extends Directive {
 
         write(writer, "?");
         if (index == -1) {
-            // #para(paraName) 中的 paraName 没有赋值时抛出异常
-            // issue: http://www.jfinal.com/feedback/1832
+            
+            
             if (checkParaAssigned && paraName != null && !scope.exists(paraName)) {
                 throw new TemplateException("The parameter \"" + paraName + "\" must be assigned", location);
             }

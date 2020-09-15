@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.ext.spring;
 
@@ -28,25 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.view.AbstractTemplateView;
 
-/**
- * JFinalView
- *
- * <pre>
- * 关键设置：
- * 1：setContentType("text/html;charset=UTF-8") 设置 content type 字符集为 UTF-8
- *
- * 2：setExposeRequestAttributes(true) 设置将 request 中的属性值注入到 model 中去
- *    便于在模板中使用 #(value) 访问 request.setAttribute(...) 进去的值
- *
- * 3： setExposeSessionAttributes(true) 设置将 session 中的属性值注入到 model 中去
- *    使用在模板中使用 #(value) 访问 session.setAttribute(...) 进去的值
- *
- * 注意：JFinalViewResolver.setSessionInView(true) 中的配置与
- *      JFinalView.setExposeSessionAttributes(true) 可实现
- *      相似的功能，区别在于前者访问方式为 #(session.value) 而后者为
- *      #(value)，两种配置只选其一
- * </pre>
- */
+
 public class JFinalView extends AbstractTemplateView {
 
     @Override
@@ -61,9 +29,9 @@ public class JFinalView extends AbstractTemplateView {
         try {
             OutputStream os = response.getOutputStream();
             JFinalViewResolver.engine.getTemplate(getUrl()).render(model, os);
-        } catch (Exception e) {    // 捕获 ByteWriter.close() 抛出的 RuntimeException
+        } catch (Exception e) {    
             Throwable cause = e.getCause();
-            if (cause instanceof IOException) {    // ClientAbortException、EofException 直接或间接继承自 IOException
+            if (cause instanceof IOException) {    
                 String name = cause.getClass().getSimpleName();
                 if ("ClientAbortException".equals(name) || "EofException".equals(name)) {
                     return;
@@ -84,24 +52,20 @@ public class JFinalView extends AbstractTemplateView {
             this.session = session;
         }
 
-        // HashMap 相关方法处理 ----------------------------------------------------
+        
 
-        /**
-         * 覆盖 HashMap 的 put
-         */
+        
         public Object put(Object name, Object value) {
             session.setAttribute((String) name, value);
             return null;
         }
 
-        /**
-         * 覆盖 HashMap 的 get
-         */
+        
         public Object get(Object name) {
             return session.getAttribute((String) name);
         }
 
-        // Session 相关方法处理 ----------------------------------------------------
+        
         public Object getAttribute(String key) {
             return session.getAttribute(key);
         }

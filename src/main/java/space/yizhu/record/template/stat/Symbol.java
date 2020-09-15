@@ -1,27 +1,11 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.stat;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Symbol
- */
+
 enum Symbol {
 
     TEXT("text", false),
@@ -49,18 +33,15 @@ enum Symbol {
     CASE("case", true),
     DEFAULT("default", false),
 
-    ID("ID", false),                // 标识符：下划线或字母开头 ^[A-Za-z_][A-Za-z0-9_]*$
+    ID("ID", false),                
     PARA("PARA", false),
 
     EOF("EOF", false);
 
     private final String name;
-    private final boolean hasPara;    // 是否有参
+    private final boolean hasPara;    
 
-    /**
-     * Lexer 中确定为系统指令以后，必须得到正确的后续 Token 序列，否则报异常
-     * 扩展指令在得到 # id ( 序列以后才要求得到正确的后续 Token 序列，否则仅仅 return fail()
-     */
+    
     @SuppressWarnings("serial")
     private static final Map<String, Symbol> keywords = new HashMap<String, Symbol>(64) {{
         put(Symbol.IF.getName(), IF);

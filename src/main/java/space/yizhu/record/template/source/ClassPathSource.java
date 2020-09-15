@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.source;
 
@@ -26,20 +12,7 @@ import java.net.URL;
 import space.yizhu.kits.LogKit;
 import space.yizhu.record.template.EngineConfig;
 
-/**
- * ClassPathSource 用于从 class path 以及 jar 包之中加载模板内容
- *
- * <pre>
- * 注意：
- * 1：如果被加载的文件是 class path 中的普通文件，则该文件支持热加载
- *
- * 2：如果被加载的文件处于 jar 包之中，则该文件不支持热加载，jar 包之中的文件在运行时通常不会被修改
- *    在极少数情况下如果需要对 jar 包之中的模板文件进行热加载，可以通过继承 ClassPathSource
- *    的方式进行扩展
- *
- * 3：JFinal Template Engine 开启热加载需要配置 engine.setDevMode(true)
- * </pre>
- */
+
 public class ClassPathSource implements ISource {
 
     protected String finalFileName;
@@ -119,17 +92,15 @@ public class ClassPathSource implements ISource {
         return new File(url.getFile()).lastModified();
     }
 
-    /**
-     * 模板文件在 jar 包文件之内则不支持热加载
-     */
+    
     public boolean isModified() {
         return isInJar ? false : lastModified != getLastModified();
     }
 
     public StringBuilder getContent() {
-        // 与 FileSorce 不同，ClassPathSource 在构造方法中已经初始化了 lastModified
-        // 下面的代码可以去掉，在此仅为了避免继承类忘了在构造中初始化 lastModified 的防卫式代码
-        if (!isInJar) {        // 如果模板文件不在 jar 包文件之中，则需要更新 lastModified 值
+        
+        
+        if (!isInJar) {        
             lastModified = getLastModified();
         }
 
@@ -146,7 +117,7 @@ public class ClassPathSource implements ISource {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(inputStream, encoding));
-            // br = new BufferedReader(new FileReader(fileName));
+            
             String line = br.readLine();
             if (line != null) {
                 ret.append(line);
@@ -182,15 +153,5 @@ public class ClassPathSource implements ISource {
 }
 
 
-/*
-	protected File getFile(URL url) {
-		try {
-			// return new File(url.toURI().getSchemeSpecificPart());
-			return new File(url.toURI());
-		} catch (URISyntaxException ex) {
-			// Fallback for URLs that are not valid URIs (should hardly ever happen).
-			return new File(url.getFile());
-		}
-	}
-*/
+
 

@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr;
 
@@ -30,9 +16,7 @@ import space.yizhu.record.template.stat.Location;
 import space.yizhu.record.template.stat.ParaToken;
 import space.yizhu.record.template.stat.ParseException;
 
-/**
- * ExprParser
- */
+
 public class ExprParser {
 
     static final Tok EOF = new Tok(Sym.EOF, -1);
@@ -85,7 +69,7 @@ public class ExprParser {
     public ForCtrl parseForCtrl() {
         Expr forCtrl = parse(false);
 
-        // 可能返回 ExprList.NULL_EXPR_LIST，必须做判断
+        
         if (forCtrl instanceof ForCtrl) {
             return (ForCtrl) forCtrl;
         } else {
@@ -107,9 +91,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * exprList : expr (',' expr)*
-     */
+    
     ExprList exprList() {
         List<Expr> exprList = new ArrayList<Expr>();
         while (true) {
@@ -133,9 +115,7 @@ public class ExprParser {
         return assign();
     }
 
-    /**
-     * assign : <assoc=right> ID ( '[' expr ']' )? '=' expr
-     */
+    
     Expr assign() {
         Tok idTok = peek();
         if (idTok.sym != Sym.ID) {
@@ -143,20 +123,20 @@ public class ExprParser {
         }
 
         int begin = forward;
-        // ID = expr
+        
         if (move().sym == Sym.ASSIGN) {
             move();
             return new Assign(idTok.value(), expr(), location);
         }
 
-        // array、map 赋值：ID [ expr ] = expr
+        
         if (peek().sym == Sym.LBRACK) {
             move();
             Expr index = expr();
             match(Sym.RBRACK);
             if (peek().sym == Sym.ASSIGN) {
                 move();
-                return new Assign(idTok.value(), index, expr(), location);    // 右结合无限连
+                return new Assign(idTok.value(), index, expr(), location);    
             }
         }
 
@@ -164,9 +144,7 @@ public class ExprParser {
         return ternary();
     }
 
-    /**
-     * ternary : expr '?' expr ':' expr
-     */
+    
     Expr ternary() {
         Expr cond = or();
         if (peek().sym == Sym.QUESTION) {
@@ -178,9 +156,7 @@ public class ExprParser {
         return cond;
     }
 
-    /**
-     * or : expr '||' expr
-     */
+    
     Expr or() {
         Expr expr = and();
         for (Tok tok = peek(); tok.sym == Sym.OR; tok = peek()) {
@@ -190,9 +166,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * and : expr '&&' expr
-     */
+    
     Expr and() {
         Expr expr = equalNotEqual();
         for (Tok tok = peek(); tok.sym == Sym.AND; tok = peek()) {
@@ -202,9 +176,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * equalNotEqual : expr ('==' | '!=') expr
-     */
+    
     Expr equalNotEqual() {
         Expr expr = greaterLess();
         for (Tok tok = peek(); tok.sym == Sym.EQUAL || tok.sym == Sym.NOTEQUAL; tok = peek()) {
@@ -214,10 +186,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * compare expr ('<=' | '>=' | '>' | '<') expr
-     * 不支持无限连： > >= < <=
-     */
+    
     Expr greaterLess() {
         Expr expr = addSub();
         Tok tok = peek();
@@ -228,9 +197,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * addSub : expr ('+'|'-') expr
-     */
+    
     Expr addSub() {
         Expr expr = mulDivMod();
         for (Tok tok = peek(); tok.sym == Sym.ADD || tok.sym == Sym.SUB; tok = peek()) {
@@ -240,9 +207,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * mulDivMod : expr ('*'|'/'|'%') expr
-     */
+    
     Expr mulDivMod() {
         Expr expr = nullSafe();
         for (Tok tok = peek(); tok.sym == Sym.MUL || tok.sym == Sym.DIV || tok.sym == Sym.MOD; tok = peek()) {
@@ -252,9 +217,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * nullSafe : expr '??' expr
-     */
+    
     Expr nullSafe() {
         Expr expr = unary();
         for (Tok tok = peek(); tok.sym == Sym.NULL_SAFE; tok = peek()) {
@@ -264,9 +227,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * unary : ('!' | '+' | '-'| '++' | '--') expr
-     */
+    
     Expr unary() {
         Tok tok = peek();
         switch (tok.sym) {
@@ -286,9 +247,7 @@ public class ExprParser {
         }
     }
 
-    /**
-     * incDec : expr ('++' | '--')
-     */
+    
     Expr incDec() {
         Expr expr = staticMember();
         Tok tok = peek();
@@ -300,11 +259,7 @@ public class ExprParser {
         return expr;
     }
 
-    /**
-     * staticMember
-     * : ID_list '::' ID
-     * | ID_list '::' ID '(' exprList? ')'
-     */
+    
     Expr staticMember() {
         if (peek().sym != Sym.ID) {
             return sharedMethod();
@@ -314,7 +269,7 @@ public class ExprParser {
         while (move().sym == Sym.DOT && move().sym == Sym.ID) {
             ;
         }
-        // ID.ID.ID::
+        
         if (peek().sym != Sym.STATIC || tokenList.get(forward - 1).sym != Sym.ID) {
             resetForward(begin);
             return sharedMethod();
@@ -324,7 +279,7 @@ public class ExprParser {
         match(Sym.STATIC);
         String memberName = match(Sym.ID).value();
 
-        // com.jfinal.kit.Str::isBlank(str)
+        
         if (peek().sym == Sym.LPAREN) {
             move();
             if (peek().sym == Sym.RPAREN) {
@@ -337,7 +292,7 @@ public class ExprParser {
             return new StaticMethod(clazz, memberName, exprList, location);
         }
 
-        // com.jfinal.core.Const::JFINAL_VERSION
+        
         return new StaticField(clazz, memberName, location);
     }
 
@@ -349,9 +304,7 @@ public class ExprParser {
         return clazz.toString();
     }
 
-    /**
-     * sharedMethod : ID '(' exprList? ')'
-     */
+    
     Expr sharedMethod() {
         Tok tok = peek();
         if (tok.sym != Sym.ID) {
@@ -375,20 +328,16 @@ public class ExprParser {
         return indexMethodField(sharedMethod);
     }
 
-    /**
-     * index : expr '[' expr ']'
-     * method : expr '.' ID '(' exprList? ')'
-     * field :  expr '.' ID
-     */
+    
     Expr indexMethodField(Expr expr) {
         if (expr == null) {
             expr = map();
         }
 
-        // Expr expr = map();
+        
         while (true) {
             Tok tok = peek();
-            // expr [ expr ]
+            
             if (tok.sym == Sym.LBRACK) {
                 move();
                 Expr index = expr();
@@ -411,24 +360,21 @@ public class ExprParser {
             }
 
             move();
-            // expr '.' ID '(' ')'
+            
             if (peek().sym == Sym.RPAREN) {
                 move();
                 expr = new Method(expr, tok.value(), location);
                 continue;
             }
 
-            // expr '.' ID '(' exprList ')'
+            
             ExprList exprList = exprList();
             match(Sym.RPAREN);
             expr = new Method(expr, tok.value(), exprList, location);
         }
     }
 
-    /**
-     * map : '{' (mapEntry ( , mapEntry ) * ) ? '}'
-     * mapEntry : (ID | STR) ':' expr
-     */
+    
     Expr map() {
         if (peek().sym != Sym.LBRACE) {
             return array();
@@ -451,10 +397,7 @@ public class ExprParser {
         return map;
     }
 
-    /**
-     * mapEntry : (ID | STR | INT | LONG | FLOAT | DOUBLE | TRUE | FALSE | NULL) ':' expr
-     * 设计目标为 map 定义与初始化，所以 ID 仅当成 STR 不进行求值
-     */
+    
     void buildMapEntry(LinkedHashMap<Object, Expr> map) {
         Expr keyExpr = expr();
         Object key;
@@ -474,11 +417,7 @@ public class ExprParser {
         map.put(key, value);
     }
 
-    /**
-     * array : '[' exprList ? | range ? ']'
-     * exprList : expr (',' expr)*
-     * range : expr .. expr
-     */
+    
     Expr array() {
         if (peek().sym != Sym.LBRACK) {
             return atom();
@@ -501,10 +440,7 @@ public class ExprParser {
         return new Array(exprList.getExprArray(), location);
     }
 
-    /**
-     * atom : '(' expr ')' | ID | STR | 'true' | 'false' | 'null'
-     * 		| INT | LONG | FLOAT | DOUBLE
-     */
+    
     Expr atom() {
         Tok tok = peek();
         switch (tok.sym) {
@@ -536,16 +472,16 @@ public class ExprParser {
                 return Const.NULL;
             case COMMA:
             case SEMICOLON:
-            case QUESTION:    // support "c ?? ? a : b"
+            case QUESTION:    
             case AND:
             case OR:
             case EQUAL:
-            case NOTEQUAL:    // support "a.b ?? && expr"
-            case RPAREN:    // support "(a.b ??)"
-            case RBRACK:    // support "[start .. end ??]"
-            case RBRACE:    // support "{key : value ??}"
-            case RANGE:        // support "[start ?? .. end]"
-            case COLON:        // support "c ? a ?? : b"
+            case NOTEQUAL:    
+            case RPAREN:    
+            case RBRACK:    
+            case RBRACE:    
+            case RANGE:        
+            case COLON:        
             case EOF:
                 return null;
             default:
@@ -553,9 +489,7 @@ public class ExprParser {
         }
     }
 
-    /**
-     * forControl : ID : expr | exprList? ';' expr? ';' exprList?
-     */
+    
     ForCtrl forCtrl() {
         ExprList exprList = exprList();
         if (peek().sym == Sym.SEMICOLON) {

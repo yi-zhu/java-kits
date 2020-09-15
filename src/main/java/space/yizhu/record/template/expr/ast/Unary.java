@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr.ast;
 
@@ -27,12 +13,7 @@ import space.yizhu.record.template.stat.Location;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * unary : ('!' | '+' | '-'| '++' | '--') expr
- *
- * 只支持 +expr 与 -expr
- * !expr、 ++expr、 --expr 分别由 Logic、IncDec 支持
- */
+
 public class Unary extends Expr {
 
     private Sym op;
@@ -47,9 +28,7 @@ public class Unary extends Expr {
         this.location = location;
     }
 
-    /**
-     * unary : ('!' | '+' | '-'| '++' | '--') expr
-     */
+    
     public Object eval(Scope scope) {
         Object value = expr.eval(scope);
         if (value == null) {
@@ -88,16 +67,7 @@ public class Unary extends Expr {
         }
     }
 
-    /**
-     * 如果可能的话，将 Unary 表达式转化成 Const 表达式，类似于 ExprParser.buildMapEntry() 需要这种转化来简化实现
-     * 除了可简化程序外，还起到一定的性能优化作用
-     *
-     * Number : +123 -456 +3.14 -0.12
-     * Boolean : !true !false
-     *
-     * 特别注意：
-     * Boolean 的支持并不需要，!true、!false 已在 ExprParser 中被 Logic 表达式接管，在此仅为逻辑上的完备性而添加
-     */
+    
     public Expr toConstIfPossible() {
         if (expr instanceof Const && (op == Sym.SUB || op == Sym.ADD || op == Sym.NOT)) {
         } else {

@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr.ast;
 
@@ -28,14 +14,10 @@ import space.yizhu.record.template.stat.Location;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * Arithmetic
- * 1：支持 byte short int long float double BigDecimal 的 + - * / % 运算
- * 2：支持字符串加法运算
- */
+
 public class Arith extends Expr {
 
-    public static final int INT = 0;    // byte、short 用 int 类型支持，java 表达式亦如此
+    public static final int INT = 0;    
     public static final int LONG = 1;
     public static final int FLOAT = 2;
     public static final int DOUBLE = 3;
@@ -90,7 +72,7 @@ public class Arith extends Expr {
             }
         }
 
-        // 字符串加法运算
+        
         if (leftValue instanceof String || rightValue instanceof String) {
             return String.valueOf(leftValue).concat(String.valueOf(rightValue));
         }
@@ -109,9 +91,7 @@ public class Arith extends Expr {
         return t1 > t2 ? t1 : t2;
     }
 
-    /**
-     * 注意：调用此方法的前提是，其中有一个对象的类型已经确定是 BigDecimal
-     */
+    
     private BigDecimal[] toBigDecimals(Number left, Number right) {
         BigDecimal[] ret = new BigDecimal[2];
         if (left instanceof BigDecimal) {
@@ -136,7 +116,7 @@ public class Arith extends Expr {
         } else if (obj instanceof BigDecimal) {
             return BIGDECIMAL;
         } else if (obj instanceof Short || obj instanceof Byte) {
-            return INT;    // short byte 用 int 支持，java 表达式亦如此
+            return INT;    
         }
         throw new TemplateException("Unsupported data type: " + obj.getClass().getName(), location);
     }
@@ -204,8 +184,8 @@ public class Arith extends Expr {
                 return Double.valueOf(left.doubleValue() / right.doubleValue());
             case BIGDECIMAL:
                 BigDecimal[] bd = toBigDecimals(left, right);
-                // return (bd[0]).divide(bd[1]);
-                return (bd[0]).divide(bd[1], RoundingMode.HALF_EVEN);    // 银行家舍入法
+                
+                return (bd[0]).divide(bd[1], RoundingMode.HALF_EVEN);    
         }
         throw new TemplateException("Unsupported data type", location);
     }

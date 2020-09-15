@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord.dialect;
 
@@ -38,11 +24,7 @@ import space.yizhu.record.plugin.activerecord.Table;
 import space.yizhu.record.plugin.activerecord.builder.TimestampProcessedModelBuilder;
 import space.yizhu.record.plugin.activerecord.builder.TimestampProcessedRecordBuilder;
 
-/**
- * AnsiSqlDialect. Try to use ANSI SQL dialect with ActiveRecordPlugin.
- * <p>
- * A clever person solves a problem. A wise person avoids it.
- */
+
 public class AnsiSqlDialect extends Dialect {
 
     public AnsiSqlDialect() {
@@ -198,9 +180,7 @@ public class AnsiSqlDialect extends Dialect {
         }
     }
 
-    /**
-     * SELECT * FROM subject t1 WHERE (SELECT count(*) FROM subject t2 WHERE t2.id < t1.id AND t2.key = '123') > = 10 AND (SELECT count(*) FROM subject t2 WHERE t2.id < t1.id AND t2.key = '123') < 20 AND t1.key = '123'
-     */
+    
     public String forPaginate(int pageNumber, int pageSize, StringBuilder findSql) {
         throw new ActiveRecordException("Your should not invoke this method because takeOverDbPaginate(...) will take over it.");
     }
@@ -211,7 +191,7 @@ public class AnsiSqlDialect extends Dialect {
 
     @SuppressWarnings("rawtypes")
     public Page<Record> takeOverDbPaginate(Connection conn, int pageNumber, int pageSize, Boolean isGroupBySql, String totalRowSql, StringBuilder findSql, Object... paras) throws SQLException {
-        // String totalRowSql = "select count(*) " + replaceOrderBy(sqlExceptSelect);
+        
         List result = CPI.query(conn, totalRowSql, paras);
         int size = result.size();
         if (isGroupBySql == null) {
@@ -236,15 +216,15 @@ public class AnsiSqlDialect extends Dialect {
             return new Page<Record>(new ArrayList<Record>(0), pageNumber, pageSize, totalPage, (int) totalRow);
         }
 
-        // StringBuilder sql = new StringBuilder();
-        // sql.append(select).append(" ").append(sqlExceptSelect);
+        
+        
         PreparedStatement pst = conn.prepareStatement(findSql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         for (int i = 0; i < paras.length; i++) {
             pst.setObject(i + 1, paras[i]);
         }
         ResultSet rs = pst.executeQuery();
 
-        // move the cursor to the start
+        
         int offset = pageSize * (pageNumber - 1);
         for (int i = 0; i < offset; i++) {
             if (!rs.next()) {
@@ -301,7 +281,7 @@ public class AnsiSqlDialect extends Dialect {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Page<? extends Model> takeOverModelPaginate(Connection conn, Class<? extends Model> modelClass, int pageNumber, int pageSize, Boolean isGroupBySql, String totalRowSql, StringBuilder findSql, Object... paras) throws Exception {
-        // String totalRowSql = "select count(*) " + replaceOrderBy(sqlExceptSelect);
+        
         List result = CPI.query(conn, totalRowSql, paras);
         int size = result.size();
         if (isGroupBySql == null) {
@@ -315,7 +295,7 @@ public class AnsiSqlDialect extends Dialect {
             totalRow = (size > 0) ? ((Number) result.get(0)).longValue() : 0;
         }
         if (totalRow == 0) {
-            return new Page(new ArrayList(0), pageNumber, pageSize, 0, 0);    // totalRow = 0;
+            return new Page(new ArrayList(0), pageNumber, pageSize, 0, 0);    
         }
 
         int totalPage = (int) (totalRow / pageSize);
@@ -326,16 +306,16 @@ public class AnsiSqlDialect extends Dialect {
             return new Page(new ArrayList(0), pageNumber, pageSize, totalPage, (int) totalRow);
         }
 
-        // --------
-        // StringBuilder sql = new StringBuilder();
-        // sql.append(select).append(" ").append(sqlExceptSelect);
+        
+        
+        
         PreparedStatement pst = conn.prepareStatement(findSql.toString(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
         for (int i = 0; i < paras.length; i++) {
             pst.setObject(i + 1, paras[i]);
         }
         ResultSet rs = pst.executeQuery();
 
-        // move the cursor to the start
+        
         int offset = pageSize * (pageNumber - 1);
         for (int i = 0; i < offset; i++) {
             if (!rs.next()) {

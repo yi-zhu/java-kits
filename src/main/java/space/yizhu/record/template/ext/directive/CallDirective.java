@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.ext.directive;
 
@@ -35,29 +21,13 @@ import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 import space.yizhu.record.template.stat.ast.Define;
 
-/**
- * CallDirective 动态调用模板函数
- *
- * 模板函数的名称与参数都可以动态指定，提升模板函数调用的灵活性
- *
- * 例如：
- *     #call(funcName, p1, p2, ..., pn)
- *     其中 funcName，为函数名，p1、p2、pn 为被调用函数所使用的参数
- *
- *
- * 如果希望模板函数不存在时忽略其调用，添加常量值 true 在第一个参数位置即可
- * 例如：
- *     #call(true, funcName, p1, p2, ..., pn)
- *
- *
- * TODO 后续优化看一下 ast.Call.java
- */
+
 public class CallDirective extends Directive {
 
     protected Expr funcNameExpr;
     protected ExprList paraExpr;
 
-    protected boolean nullSafe = false;        // 是否支持函数名不存在时跳过
+    protected boolean nullSafe = false;        
 
     public void setExprList(ExprList exprList) {
         int len = exprList.length();

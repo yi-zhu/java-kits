@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord.generator;
 
@@ -29,9 +15,7 @@ import space.yizhu.kits.Kv;
 import space.yizhu.kits.StrKit;
 import space.yizhu.record.template.Engine;
 
-/**
- * Base model 生成器
- */
+
 public class BaseModelGenerator {
 
     protected Engine engine;
@@ -43,12 +27,7 @@ public class BaseModelGenerator {
 
     protected JavaKeyword javaKeyword = JavaKeyword.me;
 
-    /**
-     * 针对 Model 中七种可以自动转换类型的 getter 方法，调用其具有确定类型返回值的 getter 方法
-     * 享用自动类型转换的便利性，例如 getInt(String)、getStr(String)
-     * 其它方法使用泛型返回值方法： get(String)
-     * 注意：jfinal 3.2 及以上版本 Model 中的六种 getter 方法才具有类型转换功能
-     */
+    
     @SuppressWarnings("serial")
     protected Map<String, String> getterTypeMap = new HashMap<String, String>() {{
         put("java.lang.String", "getStr");
@@ -79,15 +58,13 @@ public class BaseModelGenerator {
 
     protected void initEngine() {
         engine = new Engine();
-        engine.setToClassPathSourceFactory();    // 从 class path 内读模板文件
+        engine.setToClassPathSourceFactory();    
         engine.addSharedMethod(new StrKit());
         engine.addSharedObject("getterTypeMap", getterTypeMap);
         engine.addSharedObject("javaKeyword", javaKeyword);
     }
 
-    /**
-     * 使用自定义模板生成 base model
-     */
+    
     public void setTemplate(String template) {
         this.template = template;
     }
@@ -124,9 +101,7 @@ public class BaseModelGenerator {
         }
     }
 
-    /**
-     * base model 覆盖写入
-     */
+    
     protected void writeToFile(TableMeta tableMeta) throws IOException {
         File dir = new File(baseModelOutputDir);
         if (!dir.exists()) {

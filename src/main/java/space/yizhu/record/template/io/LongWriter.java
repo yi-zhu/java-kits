@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- */
+
 
 package space.yizhu.record.template.io;
 
@@ -23,8 +20,8 @@ public class LongWriter {
         byte[] bytes = byteWriter.bytes;
         getChars(value, size, chars);
 
-        // int len = Utf8Encoder.me.encode(chars, 0, size, bytes);
-        // byteWriter.out.write(bytes, 0, len);
+        
+        
 
         for (int j = 0; j < size; j++) {
             bytes[j] = (byte) chars[j];
@@ -65,33 +62,33 @@ public class LongWriter {
             i = -i;
         }
 
-        // Get 2 digits/iteration using longs until quotient fits into an int
+        
         while (i > Integer.MAX_VALUE) {
             q = i / 100;
-            // really: r = i - (q * 100);
+            
             r = (int) (i - ((q << 6) + (q << 5) + (q << 2)));
             i = q;
             buf[--charPos] = IntegerWriter.DigitOnes[r];
             buf[--charPos] = IntegerWriter.DigitTens[r];
         }
 
-        // Get 2 digits/iteration using ints
+        
         int q2;
         int i2 = (int) i;
         while (i2 >= 65536) {
             q2 = i2 / 100;
-            // really: r = i2 - (q * 100);
+            
             r = i2 - ((q2 << 6) + (q2 << 5) + (q2 << 2));
             i2 = q2;
             buf[--charPos] = IntegerWriter.DigitOnes[r];
             buf[--charPos] = IntegerWriter.DigitTens[r];
         }
 
-        // Fall thru to fast mode for smaller numbers
-        // assert(i2 <= 65536, i2);
+        
+        
         for (; ; ) {
             q2 = (i2 * 52429) >>> (16 + 3);
-            r = i2 - ((q2 << 3) + (q2 << 1));  // r = i2-(q2*10) ...
+            r = i2 - ((q2 << 3) + (q2 << 1));  
             buf[--charPos] = IntegerWriter.digits[r];
             i2 = q2;
             if (i2 == 0) break;

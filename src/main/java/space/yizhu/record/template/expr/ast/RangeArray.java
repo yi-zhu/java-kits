@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr.ast;
 
@@ -23,23 +9,13 @@ import space.yizhu.record.template.stat.Location;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * RangeArray : [expr .. expr]
- *
- * 用法：
- * 1：[1..3]
- * 2：[3..1]
- */
+
 public class RangeArray extends Expr {
 
     private Expr start;
     private Expr end;
 
-    /**
-     * array : '[' exprList ? | range ? ']'
-     * exprList : expr (',' expr)*
-     * range : expr .. expr
-     */
+    
     public RangeArray(Expr start, Expr end, Location location) {
         if (start == null) {
             throw new ParseException("The start value of range array can not be blank", location);

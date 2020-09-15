@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord.generator;
 
@@ -27,9 +13,7 @@ import space.yizhu.kits.LogKit;
 import space.yizhu.kits.StrKit;
 import space.yizhu.record.template.Engine;
 
-/**
- * MappingKit 文件生成器
- */
+
 public class MappingKitGenerator {
 
     protected Engine engine;
@@ -52,9 +36,7 @@ public class MappingKitGenerator {
         engine.addSharedMethod(new StrKit());
     }
 
-    /**
-     * 使用自定义模板生成 MappingKit
-     */
+    
     public void setTemplate(String template) {
         this.template = template;
     }
@@ -101,9 +83,7 @@ public class MappingKitGenerator {
         writeToFile(ret);
     }
 
-    /**
-     * _MappingKit.java 覆盖写入
-     */
+    
     protected void writeToFile(String ret) {
         File dir = new File(mappingKitOutputDir);
         if (!dir.exists()) {

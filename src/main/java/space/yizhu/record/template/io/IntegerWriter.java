@@ -1,7 +1,4 @@
-/*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- */
+
 
 package space.yizhu.record.template.io;
 
@@ -61,8 +58,8 @@ public class IntegerWriter {
         byte[] bytes = byteWriter.bytes;
         getChars(i, size, chars);
 
-        // int len = Utf8Encoder.me.encode(chars, 0, size, bytes);
-        // byteWriter.out.write(bytes, 0, len);
+        
+        
 
         for (int j = 0; j < size; j++) {
             bytes[j] = (byte) chars[j];
@@ -98,21 +95,21 @@ public class IntegerWriter {
             i = -i;
         }
 
-        // Generate two digits per iteration
+        
         while (i >= 65536) {
             q = i / 100;
-            // really: r = i - (q * 100);
+            
             r = i - ((q << 6) + (q << 5) + (q << 2));
             i = q;
             buf[--charPos] = DigitOnes[r];
             buf[--charPos] = DigitTens[r];
         }
 
-        // Fall thru to fast mode for smaller numbers
-        // assert(i <= 65536, i);
+        
+        
         for (; ; ) {
             q = (i * 52429) >>> (16 + 3);
-            r = i - ((q << 3) + (q << 1));  // r = i-(q*10) ...
+            r = i - ((q << 3) + (q << 1));  
             buf[--charPos] = digits[r];
             i = q;
             if (i == 0) break;

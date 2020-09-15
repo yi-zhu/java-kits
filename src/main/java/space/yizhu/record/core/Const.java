@@ -1,26 +1,10 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.core;
 
 import space.yizhu.record.render.ViewType;
 
-/**
- * Global constants definition
- */
+
 public interface Const {
 
     String JFINAL_VERSION = "3.6";
@@ -39,17 +23,17 @@ public interface Const {
 
     String DEFAULT_VIEW_EXTENSION = ".html";
 
-    int DEFAULT_MAX_POST_SIZE = 1024 * 1024 * 10;            // Default max post size of multipart request: 10 Meg
+    int DEFAULT_MAX_POST_SIZE = 1024 * 1024 * 10;            
 
     int DEFAULT_I18N_MAX_AGE_OF_COOKIE = 999999999;
 
-    int DEFAULT_FREEMARKER_TEMPLATE_UPDATE_DELAY = 3600;    // For not devMode only
+    int DEFAULT_FREEMARKER_TEMPLATE_UPDATE_DELAY = 3600;    
 
     String DEFAULT_TOKEN_NAME = "_jfinal_token";
 
-    int DEFAULT_SECONDS_OF_TOKEN_TIME_OUT = 900;            // 900 seconds ---> 15 minutes
+    int DEFAULT_SECONDS_OF_TOKEN_TIME_OUT = 900;            
 
-    int MIN_SECONDS_OF_TOKEN_TIME_OUT = 300;                // 300 seconds ---> 5 minutes
+    int MIN_SECONDS_OF_TOKEN_TIME_OUT = 300;                
 
     int DEFAULT_CONFIG_PLUGIN_ORDER = 2;
 

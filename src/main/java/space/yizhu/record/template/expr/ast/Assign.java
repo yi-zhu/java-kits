@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr.ast;
 
@@ -24,27 +10,14 @@ import space.yizhu.record.template.stat.Location;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * Assign
- *
- * 支持三种赋值，其中第二种如果括号中是 ID 或 STR 则演变为第三种是对 map 赋值：
- * 1：ID = expr
- * 2：ID [ expr ] = expr
- *   如果 expr 为 int 或 long 型，则是对 array 赋值
- *   如果 expr 为 ID、STR 型，则是对 map 进行赋值
- *   否则抛异常出来
- * 3：ID [ ID ] = expr 或者 ID [ STR ] = expr
- * 4：支持无限连：id = array[ i = 0 ] = array[1] = 123
- */
+
 public class Assign extends Expr {
 
     private String id;
-    private Expr index;    // index 用于支持 ID [ expr ] = expr 这种形式
+    private Expr index;    
     private Expr right;
 
-    /**
-     * 数组赋值表达式
-     */
+    
     public Assign(String id, Expr index, Expr right, Location location) {
         if (index == null) {
             throw new ParseException("The index expression of array assignment can not be null", location);
@@ -58,9 +31,7 @@ public class Assign extends Expr {
         this.location = location;
     }
 
-    /**
-     * 普通赋值表达式
-     */
+    
     public Assign(String id, Expr right, Location location) {
         if (right == null) {
             throw new ParseException("The expression on the right side of an assignment expression can not be null", location);
@@ -71,11 +42,7 @@ public class Assign extends Expr {
         this.location = location;
     }
 
-    /**
-     * 获取 assign 表达式左侧标识符 id
-     * 在自定义指令中得到 id 值，可以得知该赋值表达式是针对哪个变量在操作，有助于扩展
-     * 需求来源：http://www.jfinal.com/share/379
-     */
+    
     public String getId() {
         return id;
     }
@@ -88,9 +55,7 @@ public class Assign extends Expr {
         return right;
     }
 
-    /**
-     * 赋值语句有返回值，可以用于表达式计算
-     */
+    
     public Object eval(Scope scope) {
         if (index == null) {
             return assignVariable(scope);
@@ -112,9 +77,7 @@ public class Assign extends Expr {
         return rightValue;
     }
 
-    /**
-     * 数组或 Map 赋值
-     */
+    
     @SuppressWarnings({"unchecked", "rawtypes"})
     Object assignElement(Scope scope) {
         Object target = scope.get(id);

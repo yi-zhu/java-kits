@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.kits;
 
@@ -20,14 +6,14 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 /**
- * new File("..\path\abc.txt") 中的三个方法获取路径的方法
+ * new File("..\path\text.fle") 中的三个方法获取路径的方法
  * 1： getPath() 获取相对路径，例如   ..\path\abc.txt
- * 2： getAbsolutePath() 获取绝对路径，但可能包含 ".." 或 "." 字符，例如  D:\otherPath\..\path\abc.txt
- * 3： getCanonicalPath() 获取绝对路径，但不包含 ".." 或 "." 字符，例如  D:\path\abc.txt
+ * 2： getAbsolutePath() 获取绝对路径，但可能包含 ".." 或 "." 字符，例如  D:\Path\..\path\text.fle
+ * 3： getCanonicalPath() 获取绝对路径，但不包含 ".." 或 "." 字符，例如  D:\path\text.fle
  *
  * 2018-05-12 新测试：
- * 1：PathKit.class.getResource("/") 将获取 class path 根目录，例如：/Users/james/workspace/jfinal/webapp/WEB-INF/classes
- * 2：PathKit.class.getResource("") 将获取 PathKit 这个 class 所在的目录，即：rootClassPath + "/com/jfinal/kit"
+ * 1：PathKit.class.getResource("/") 将获取 class path 根目录，例如：D:\apache\tomcat-9.M19\webapps\ROOT\WEB-INF\classes
+ * 2：PathKit.class.getResource("") 将获取 PathKit 这个 class 所在的目录，即：rootClassPath + "/space/yizhu/kits"
  *
  * 3：ClassLoader.getResource("/") 将获取到 null 值，该用法无意义
  * 4：ClassLoader.getResource("") 将获取 class path 根目录，与 PathKit.class.getResource("/") 一样

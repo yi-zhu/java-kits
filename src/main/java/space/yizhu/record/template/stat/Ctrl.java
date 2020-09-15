@@ -1,28 +1,8 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.stat;
 
-/**
- * Ctrl
- *
- * 封装 AST 执行过程中的控制状态，避免使用 Scope.data 保存控制状态
- * 从而污染用户空间数据，目前仅用于 nullSafe、break、continue、return 控制
- * 未来可根据需求引入更多控制状态
- */
+
 public class Ctrl {
 
     private static final int JUMP_NONE = 0;

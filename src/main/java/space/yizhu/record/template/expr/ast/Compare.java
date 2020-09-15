@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr.ast;
 
@@ -24,15 +10,7 @@ import space.yizhu.record.template.stat.Location;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * Compare
- *
- * 1：支持 byte short int long float double BigDecimal 的 == != > >= < <= 操作
- * 2：== != 作用于 string，调用其 equals 方法进行比较
- * 3：> >= < <= 可以比较实现了 Comparable 接口的对象
- *
- * 注意：float double 浮点型数据在比较操作时，具有精度上的局限性，不建议对浮点数进行比较
- */
+
 public class Compare extends Expr {
 
     private Sym op;
@@ -93,12 +71,12 @@ public class Compare extends Expr {
                 case Arith.LONG:
                     return l.longValue() == r.longValue();
                 case Arith.FLOAT:
-                    // 此法仅适用于两个对象类型相同的情况，升级为 BigDecimal 后精度会再高几个数量级
-                    // return Float.floatToIntBits(l.floatValue()) == Float.floatToIntBits(r.floatValue());
+                    
+                    
                     return l.floatValue() == r.floatValue();
                 case Arith.DOUBLE:
-                    // 此法仅适用于两个对象类型相同的情况，升级为 BigDecimal 后精度会再高几个数量级
-                    // return Double.doubleToLongBits(l.doubleValue()) == Double.doubleToLongBits(r.doubleValue());
+                    
+                    
                     return l.doubleValue() == r.doubleValue();
                 case Arith.BIGDECIMAL:
                     BigDecimal[] bd = toBigDecimals(l, r);
@@ -122,10 +100,10 @@ public class Compare extends Expr {
                 case Arith.LONG:
                     return l.longValue() > r.longValue();
                 case Arith.FLOAT:
-                    // return Float.floatToIntBits(l.floatValue()) > Float.floatToIntBits(r.floatValue());
+                    
                     return l.floatValue() > r.floatValue();
                 case Arith.DOUBLE:
-                    // return Double.doubleToLongBits(l.doubleValue()) > Double.doubleToLongBits(r.doubleValue());
+                    
                     return l.doubleValue() > r.doubleValue();
                 case Arith.BIGDECIMAL:
                     BigDecimal[] bd = toBigDecimals(l, r);
@@ -155,10 +133,10 @@ public class Compare extends Expr {
                 case Arith.LONG:
                     return l.longValue() >= r.longValue();
                 case Arith.FLOAT:
-                    // return Float.floatToIntBits(l.floatValue()) >= Float.floatToIntBits(r.floatValue());
+                    
                     return l.floatValue() >= r.floatValue();
                 case Arith.DOUBLE:
-                    // return Double.doubleToLongBits(l.doubleValue()) >= Double.doubleToLongBits(r.doubleValue());
+                    
                     return l.doubleValue() >= r.doubleValue();
                 case Arith.BIGDECIMAL:
                     BigDecimal[] bd = toBigDecimals(l, r);
@@ -188,10 +166,10 @@ public class Compare extends Expr {
                 case Arith.LONG:
                     return l.longValue() < r.longValue();
                 case Arith.FLOAT:
-                    // return Float.floatToIntBits(l.floatValue()) < Float.floatToIntBits(r.floatValue());
+                    
                     return l.floatValue() < r.floatValue();
                 case Arith.DOUBLE:
-                    // return Double.doubleToLongBits(l.doubleValue()) < Double.doubleToLongBits(r.doubleValue());
+                    
                     return l.doubleValue() < r.doubleValue();
                 case Arith.BIGDECIMAL:
                     BigDecimal[] bd = toBigDecimals(l, r);
@@ -221,10 +199,10 @@ public class Compare extends Expr {
                 case Arith.LONG:
                     return l.longValue() <= r.longValue();
                 case Arith.FLOAT:
-                    // return Float.floatToIntBits(l.floatValue()) <= Float.floatToIntBits(r.floatValue());
+                    
                     return l.floatValue() <= r.floatValue();
                 case Arith.DOUBLE:
-                    // return Double.doubleToLongBits(l.doubleValue()) <= Double.doubleToLongBits(r.doubleValue());
+                    
                     return l.doubleValue() <= r.doubleValue();
                 case Arith.BIGDECIMAL:
                     BigDecimal[] bd = toBigDecimals(l, r);
@@ -263,7 +241,7 @@ public class Compare extends Expr {
         } else if (obj instanceof BigDecimal) {
             return Arith.BIGDECIMAL;
         } else if (obj instanceof Short || obj instanceof Byte) {
-            return Arith.INT;    // short byte 用 int 支持，java 表达式亦如此
+            return Arith.INT;    
         }
         throw new TemplateException("Unsupported data type: " + obj.getClass().getName(), location);
     }

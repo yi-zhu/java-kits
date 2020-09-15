@@ -1,29 +1,11 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.kits;
 
-/**
- * StrKit.
- */
+
 public class StrKit {
 
-    /**
-     * 首字母变小写
-     */
+    
     public static String firstCharToLowerCase(String str) {
         char firstChar = str.charAt(0);
         if (firstChar >= 'A' && firstChar <= 'Z') {
@@ -34,9 +16,7 @@ public class StrKit {
         return str;
     }
 
-    /**
-     * 首字母变大写
-     */
+    
     public static String firstCharToUpperCase(String str) {
         char firstChar = str.charAt(0);
         if (firstChar >= 'a' && firstChar <= 'z') {
@@ -47,9 +27,7 @@ public class StrKit {
         return str;
     }
 
-    /**
-     * 字符串为 null 或者内部字符全部为 ' ' '\t' '\n' '\r' 这四类字符时返回 true
-     */
+    
     public static boolean isBlank(String str) {
         if (str == null) {
             return true;
@@ -64,8 +42,8 @@ public class StrKit {
                 case '\t':
                 case '\n':
                 case '\r':
-                    // case '\b':
-                    // case '\f':
+                    
+                    
                     break;
                 default:
                     return false;
@@ -113,7 +91,7 @@ public class StrKit {
         int j = 0;
         for (int i = 0; i < fromArray.length; i++) {
             if (fromArray[i] == '_') {
-                // 当前字符为下划线时，将指针后移一位，将紧随下划线后面一个字符转成大写并存放
+                
                 i++;
                 if (i < fromArray.length) {
                     toArray[j++] = Character.toUpperCase(fromArray[i]);

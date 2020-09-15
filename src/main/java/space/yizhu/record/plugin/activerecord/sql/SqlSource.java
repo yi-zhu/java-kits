@@ -3,9 +3,7 @@ package space.yizhu.record.plugin.activerecord.sql;
 import space.yizhu.record.template.source.ISource;
 import space.yizhu.record.template.source.ISource;
 
-/**
- * 封装 sql 模板源
- */
+
 class SqlSource {
 
     String file;

@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr.ast;
 
@@ -22,17 +8,10 @@ import space.yizhu.kits.StrKit;
 import space.yizhu.record.plugin.activerecord.Model;
 import space.yizhu.record.plugin.activerecord.Record;
 
-/**
- * FieldGetters 封装官方默认 FieldGetter 实现
- */
+
 public class FieldGetters {
 
-    /**
-     * NullFieldGetter
-     *
-     * 用于消除 FieldKit.getFieldGetter(...) 中的 instanceof 判断，并且让 Map fieldGetterCache
-     * 中的 value 不必使用 Object 类型。还消除了 Field.exec(...) 中的 null 值判断
-     */
+    
     public static class NullFieldGetter extends FieldGetter {
 
         public static final NullFieldGetter me = new NullFieldGetter();
@@ -50,11 +29,7 @@ public class FieldGetters {
         }
     }
 
-    /**
-     * GetterMethodFieldGetter
-     *
-     * 使用 getter 方法获取 target.field 表达式的值
-     */
+    
     public static class GetterMethodFieldGetter extends FieldGetter {
 
         protected java.lang.reflect.Method getterMethod;
@@ -72,9 +47,9 @@ public class FieldGetters {
             java.lang.reflect.Method[] methodArray = targetClass.getMethods();
             for (java.lang.reflect.Method method : methodArray) {
                 if (method.getName().equals(getterName) && method.getParameterTypes().length == 0) {
-                    // if (MethodKit.isForbiddenMethod(getterName)) {
-                    // throw new RuntimeException("Forbidden method: " + getterName);
-                    // }
+                    
+                    
+                    
 
                     return new GetterMethodFieldGetter(method);
                 }
@@ -92,17 +67,12 @@ public class FieldGetters {
         }
     }
 
-    /**
-     * IsMethodFieldGetter
-     *
-     * 使用 target.isXxx() 方法获取值，默认不启用该功能，用户可以通过如下方式启用：
-     * Engine.addLastFieldGetter(new FieldGetters.IsMethodFieldGetter());
-     */
+    
     public static class IsMethodFieldGetter extends FieldGetter {
 
         protected java.lang.reflect.Method isMethod;
 
-        // 此构造方法仅为了方便在 Engine.addFieldGetter(...) 添加时不用为构造方法传参
+        
         public IsMethodFieldGetter() {
         }
 
@@ -138,14 +108,10 @@ public class FieldGetters {
         }
     }
 
-    /**
-     * ModelFieldGetter
-     *
-     * 使用 Model.get(String) 获取值
-     */
+    
     public static class ModelFieldGetter extends FieldGetter {
 
-        // 所有 Model 可以共享 ModelFieldGetter 获取属性
+        
         static final ModelFieldGetter singleton = new ModelFieldGetter();
 
         public FieldGetter takeOver(Class<?> targetClass, String fieldName) {
@@ -161,14 +127,10 @@ public class FieldGetters {
         }
     }
 
-    /**
-     * RecordFieldGetter
-     *
-     * 使用 Record.get(String) 获取值
-     */
+    
     public static class RecordFieldGetter extends FieldGetter {
 
-        // 所有 Record 可以共享 RecordFieldGetter 获取属性
+        
         static final RecordFieldGetter singleton = new RecordFieldGetter();
 
         public FieldGetter takeOver(Class<?> targetClass, String fieldName) {
@@ -184,14 +146,10 @@ public class FieldGetters {
         }
     }
 
-    /**
-     * MapFieldGetter
-     *
-     * 使用 Map.get(Object) 获取值
-     */
+    
     public static class MapFieldGetter extends FieldGetter {
 
-        // 所有 Map 可以共享 MapFieldGetter 获取属性
+        
         static final MapFieldGetter singleton = new MapFieldGetter();
 
         public FieldGetter takeOver(Class<?> targetClass, String fieldName) {
@@ -207,11 +165,7 @@ public class FieldGetters {
         }
     }
 
-    /**
-     * RealFieldGetter
-     *
-     * 使用 target.field 获取值
-     */
+    
     public static class RealFieldGetter extends FieldGetter {
 
         protected java.lang.reflect.Field field;
@@ -240,14 +194,10 @@ public class FieldGetters {
         }
     }
 
-    /**
-     * ArrayLengthGetter
-     *
-     * 获取数组长度： array.length
-     */
+    
     public static class ArrayLengthGetter extends FieldGetter {
 
-        // 所有数组可以共享 ArrayLengthGetter 获取属性
+        
         static final ArrayLengthGetter singleton = new ArrayLengthGetter();
 
         public FieldGetter takeOver(Class<?> targetClass, String fieldName) {

@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.expr.ast;
 
@@ -22,24 +8,14 @@ import java.util.LinkedList;
 
 import space.yizhu.kits.SyncWriteMap;
 
-/**
- * FieldKit
- */
+
 public class FieldKit {
 
     private static FieldGetter[] getters = init();
 
     private static final HashMap<Object, FieldGetter> fieldGetterCache = new SyncWriteMap<Object, FieldGetter>(1024, 0.25F);
 
-    /**
-     * 初始化官方默认 FieldGetter
-     *
-     * 注意：
-     * 默认不启用 IsMethodFieldGetter，用户可以通过下面的代码启用：
-     * Engine.addLastFieldGetter(new FieldGetters.IsMethodFieldGetter());
-     *
-     * 也可以通过直接调用 target.isXxx() 方法来达到与 target.xxx 表达式相同的目的
-     */
+    
     private static FieldGetter[] init() {
         LinkedList<FieldGetter> ret = new LinkedList<FieldGetter>();
 
@@ -49,7 +25,7 @@ public class FieldKit {
         ret.addLast(new FieldGetters.MapFieldGetter());
         ret.addLast(new FieldGetters.RealFieldGetter(null));
         ret.addLast(new FieldGetters.ArrayLengthGetter());
-        // ret.addLast(new IsMethodFieldGetter());
+        
 
         return ret.toArray(new FieldGetter[ret.size()]);
     }
@@ -57,7 +33,7 @@ public class FieldKit {
     public static FieldGetter getFieldGetter(Object key, Class<?> targetClass, String fieldName) {
         FieldGetter fieldGetter = fieldGetterCache.get(key);
         if (fieldGetter == null) {
-            fieldGetter = doGetFieldGetter(targetClass, fieldName);    // 已确保不会返回 null
+            fieldGetter = doGetFieldGetter(targetClass, fieldName);    
             fieldGetterCache.putIfAbsent(key, fieldGetter);
         }
         return fieldGetter;
@@ -86,7 +62,7 @@ public class FieldKit {
         addFieldGetter(fieldGetter, null, false);
     }
 
-    // 当 Integer index 不为 null 时，boolean addLast 为无效参数
+    
     private static synchronized void addFieldGetter(FieldGetter fieldGetter, Integer index, boolean addLast) {
         checkParameter(fieldGetter);
 

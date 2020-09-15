@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord;
 
@@ -22,24 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Cross Package Invoking pattern for package activerecord.
- *
- * 为了避免开发者误用，Model、Db 中的部分方法没有完全开放出来，不能直接调用，
- * 但可以通过 CPI 访问那些未完全开放的方法，对于扩展性开发十分有用
- *
- * 例如：
- *     Map attrMap = CPI.getAttrs(user);
- *     以上代码可以获取到 User 这个 model 中的 attrs 属性
- */
+
 @SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class CPI {
 
-    /**
-     * Return the attributes map of the model
-     * @param model the model extends from class Model
-     * @return the attributes map of the model
-     */
+    
     public static final Map<String, Object> getAttrs(Model model) {
         return model._getAttrs();
     }
@@ -68,13 +41,7 @@ public abstract class CPI {
         return Db.query(DbKit.getConfig(configName), conn, sql, paras);
     }
 
-    /**
-     * Return the columns map of the record
-     * @param record the Record object
-     * @return the columns map of the record
-    public static final Map<String, Object> getColumns(Record record) {
-    return record.getColumns();
-    } */
+    
 
     public static void setColumnsMap(Record record, Map<String, Object> columns) {
         record.setColumnsMap(columns);

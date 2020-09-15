@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord.generator;
 
@@ -31,9 +17,7 @@ import javax.sql.DataSource;
 import space.yizhu.kits.LogKit;
 import space.yizhu.kits.StrKit;
 
-/**
- * DataDictionary 数据字典生成器
- */
+
 public class DataDictionaryGenerator {
 
     protected DataSource dataSource;
@@ -96,17 +80,12 @@ public class DataDictionaryGenerator {
         ret.append("\n");
     }
 
-    /*
-    -----------+---------+------+-----+---------+----------------
-     Field     | Type    | Null | Key | Default | Remarks
-    -----------+---------+------+-----+---------+----------------
-     id		   | int(11) | NO	| PRI | NULL	| remarks here
-    */
+    
     protected void genCell(int columnMaxLen, String preChar, String value, String fillChar, String postChar, StringBuilder ret) {
         ret.append(preChar);
         ret.append(value);
         for (int i = 0, n = columnMaxLen - value.length() + 1; i < n; i++) {
-            ret.append(fillChar);    // 值后的填充字符，值为 " "、"-"
+            ret.append(fillChar);    
         }
         ret.append(postChar);
     }
@@ -149,30 +128,30 @@ public class DataDictionaryGenerator {
             conn = dataSource.getConnection();
             DatabaseMetaData dbMeta = conn.getMetaData();
             for (TableMeta tableMeta : tableMetas) {
-                // 重建整个 TableMeta.columnMetas
+                
                 tableMeta.columnMetas = new ArrayList<ColumnMeta>();
-                // 通过查看 dbMeta.getColumns(...) 源码注释，还可以获取到更多 meta data
+                
                 ResultSet rs = dbMeta.getColumns(conn.getCatalog(), null, tableMeta.name, null);
                 while (rs.next()) {
                     ColumnMeta columnMeta = new ColumnMeta();
-                    columnMeta.name = rs.getString("COLUMN_NAME");            // 名称
+                    columnMeta.name = rs.getString("COLUMN_NAME");            
 
-                    columnMeta.type = rs.getString("TYPE_NAME");            // 类型
+                    columnMeta.type = rs.getString("TYPE_NAME");            
                     if (columnMeta.type == null) {
                         columnMeta.type = "";
                     }
 
-                    int columnSize = rs.getInt("COLUMN_SIZE");                // 长度
+                    int columnSize = rs.getInt("COLUMN_SIZE");                
                     if (columnSize > 0) {
                         columnMeta.type = columnMeta.type + "(" + columnSize;
-                        int decimalDigits = rs.getInt("DECIMAL_DIGITS");    // 小数位数
+                        int decimalDigits = rs.getInt("DECIMAL_DIGITS");    
                         if (decimalDigits > 0) {
                             columnMeta.type = columnMeta.type + "," + decimalDigits;
                         }
                         columnMeta.type = columnMeta.type + ")";
                     }
 
-                    columnMeta.isNullable = rs.getString("IS_NULLABLE");    // 是否允许 NULL 值
+                    columnMeta.isNullable = rs.getString("IS_NULLABLE");    
                     if (columnMeta.isNullable == null) {
                         columnMeta.isNullable = "";
                     }
@@ -186,12 +165,12 @@ public class DataDictionaryGenerator {
                         }
                     }
 
-                    columnMeta.defaultValue = rs.getString("COLUMN_DEF");    // 默认值
+                    columnMeta.defaultValue = rs.getString("COLUMN_DEF");    
                     if (columnMeta.defaultValue == null) {
                         columnMeta.defaultValue = "";
                     }
 
-                    columnMeta.remarks = rs.getString("REMARKS");            // 备注
+                    columnMeta.remarks = rs.getString("REMARKS");            
                     if (columnMeta.remarks == null) {
                         columnMeta.remarks = "";
                     }
@@ -223,9 +202,7 @@ public class DataDictionaryGenerator {
         }
     }
 
-    /**
-     * _DataDictionary.txt 覆盖写入
-     */
+    
     protected void writeToFile(String ret) {
         File dir = new File(dataDictionaryOutputDir);
         if (!dir.exists()) {

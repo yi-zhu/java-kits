@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.ext.directive;
 
@@ -28,17 +14,7 @@ import space.yizhu.record.template.expr.ast.Id;
 import space.yizhu.record.template.stat.ParseException;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * #string 指令方便定义大量的多行文本变量，这个是 java 语言中极为需要的功能
- *
- * 定义：
- * #string(name)
- *    在此是大量的字符串
- * #end
- *
- * 使用：
- * #(name)
- */
+
 public class StringDirective extends Directive {
 
     private String name;
@@ -85,11 +61,7 @@ public class StringDirective extends Directive {
         }
     }
 
-    /**
-     * hasEnd() 方法返回 true 时，表示该指令拥有指令体以及 #end 结束块
-     * 模板引擎在解析时会将 "指令体" 赋值到 stat 属性中，在 exec(...) 方法中
-     * 可通过 stat.exec(...) 执行 "指令体" 内部的所有指令
-     */
+    
     public boolean hasEnd() {
         return true;
     }

@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.stat.ast;
 
@@ -29,21 +15,7 @@ import java.util.NoSuchElementException;
 import space.yizhu.record.template.TemplateException;
 import space.yizhu.record.template.stat.Location;
 
-/**
- * ForIteratorStatus
- * 封装 #for( id : expr) 迭代语句状态，便于模板中获取
- *
- * 使用以下表达式可以模板中获取迭代状态：
- * for.size 被迭代集合元素数量，不支持 Iterator 与 Iterable
- * for.index 从 0 下始的下标
- * for.count 从 1 开始的计数器
- * for.first 是否第一个元素
- * for.last 是否最后一个元素
- * for.odd 是否第奇数个元素
- * for.even 是否第偶数个元素
- * for.outer 获取外层 for 对象，便于获取外层 for 循环状态
- *           例如: for.outer.index
- */
+
 public class ForIteratorStatus {
 
     private Object outer;
@@ -71,7 +43,7 @@ public class ForIteratorStatus {
             iterator = new MapIterator(((Map<Object, Object>) target).entrySet().iterator());
             return;
         }
-        if (target == null) {    // 必须放在 target.getClass() 之前，避免空指针异常
+        if (target == null) {    
             size = 0;
             iterator = NullIterator.me;
             return;

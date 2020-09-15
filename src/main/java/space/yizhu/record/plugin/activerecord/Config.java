@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.plugin.activerecord;
 
@@ -46,22 +32,12 @@ public class Config {
 
     SqlKit sqlKit;
 
-    // For ActiveRecordPlugin only, dataSource can be null
+    
     Config(String name, DataSource dataSource, int transactionLevel) {
         init(name, dataSource, new MysqlDialect(), false, false, transactionLevel, IContainerFactory.defaultContainerFactory, new EhCache());
     }
 
-    /**
-     * Constructor with full parameters
-     * @param name the name of the config
-     * @param dataSource the dataSource
-     * @param dialect the dialect
-     * @param showSql the showSql
-     * @param devMode the devMode
-     * @param transactionLevel the transaction level
-     * @param containerFactory the containerFactory
-     * @param cache the cache
-     */
+    
     public Config(String name, DataSource dataSource, Dialect dialect, boolean showSql, boolean devMode, int transactionLevel, IContainerFactory containerFactory, ICache cache) {
         if (dataSource == null) {
             throw new IllegalArgumentException("DataSource can not be null");
@@ -88,7 +64,7 @@ public class Config {
         this.dialect = dialect;
         this.showSql = showSql;
         this.devMode = devMode;
-        // this.transactionLevel = transactionLevel;
+        
         this.setTransactionLevel(transactionLevel);
         this.containerFactory = containerFactory;
         this.cache = cache;
@@ -96,16 +72,12 @@ public class Config {
         this.sqlKit = new SqlKit(this.name, this.devMode);
     }
 
-    /**
-     * Constructor with name and dataSource
-     */
+    
     public Config(String name, DataSource dataSource) {
         this(name, dataSource, new MysqlDialect());
     }
 
-    /**
-     * Constructor with name, dataSource and dialect
-     */
+    
     public Config(String name, DataSource dataSource, Dialect dialect) {
         this(name, dataSource, dialect, false, false, DbKit.DEFAULT_TRANSACTION_LEVEL, IContainerFactory.defaultContainerFactory, new EhCache());
     }
@@ -127,9 +99,7 @@ public class Config {
         this.transactionLevel = transactionLevel;
     }
 
-    /**
-     * Create broken config for DbKit.brokenConfig = Config.createBrokenConfig();
-     */
+    
     static Config createBrokenConfig() {
         Config ret = new Config();
         ret.dialect = new MysqlDialect();
@@ -181,11 +151,9 @@ public class Config {
         return devMode;
     }
 
-    // --------
+    
 
-    /**
-     * Support transaction with Transaction interceptor
-     */
+    
     public void setThreadLocalConnection(Connection connection) {
         threadLocal.set(connection);
     }
@@ -194,9 +162,7 @@ public class Config {
         threadLocal.remove();
     }
 
-    /**
-     * Get Connection. Support transaction if Connection in ThreadLocal
-     */
+    
     public Connection getConnection() throws SQLException {
         Connection conn = threadLocal.get();
         if (conn != null)
@@ -204,25 +170,17 @@ public class Config {
         return showSql ? new SqlReporter(dataSource.getConnection()).getConnection() : dataSource.getConnection();
     }
 
-    /**
-     * Helps to implement nested transaction.
-     * Tx.intercept(...) and Db.tx(...) need this method to detected if it in nested transaction.
-     */
+    
     public Connection getThreadLocalConnection() {
         return threadLocal.get();
     }
 
-    /**
-     * Return true if current thread in transaction.
-     */
+    
     public boolean isInTransaction() {
         return threadLocal.get() != null;
     }
 
-    /**
-     * Close ResultSet、Statement、Connection
-     * ThreadLocal support declare transaction.
-     */
+    
     public void close(ResultSet rs, Statement st, Connection conn) {
         if (rs != null) {
             try {
@@ -239,7 +197,7 @@ public class Config {
             }
         }
 
-        if (threadLocal.get() == null) {    // in transaction if conn in threadlocal
+        if (threadLocal.get() == null) {    
             if (conn != null) {
                 try {
                     conn.close();
@@ -259,7 +217,7 @@ public class Config {
             }
         }
 
-        if (threadLocal.get() == null) {    // in transaction if conn in threadlocal
+        if (threadLocal.get() == null) {    
             if (conn != null) {
                 try {
                     conn.close();
@@ -271,7 +229,7 @@ public class Config {
     }
 
     public void close(Connection conn) {
-        if (threadLocal.get() == null)        // in transaction if conn in threadlocal
+        if (threadLocal.get() == null)        
             if (conn != null)
                 try {
                     conn.close();

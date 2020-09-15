@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.source;
 
@@ -25,9 +11,7 @@ import java.io.InputStreamReader;
 import space.yizhu.kits.LogKit;
 import space.yizhu.record.template.EngineConfig;
 
-/**
- * FileSource 用于从普通文件中加载模板内容
- */
+
 public class FileSource implements ISource {
 
     private String finalFileName;
@@ -72,7 +56,7 @@ public class FileSource implements ISource {
             throw new RuntimeException("File not found : " + finalFileName);
         }
 
-        // 极为重要，否则在开发模式下 isModified() 一直返回 true，缓存一直失效（原因是 lastModified 默认值为 0）
+        
         this.lastModified = file.lastModified();
 
         return loadFile(file, encoding);
@@ -97,7 +81,7 @@ public class FileSource implements ISource {
         BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
-            // br = new BufferedReader(new FileReader(fileName));
+            
             String line = br.readLine();
             if (line != null) {
                 ret.append(line);

@@ -1,18 +1,4 @@
-/**
- * Copyright (c) 2011-2019, James Zhan 詹波 (jfinal@126.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package space.yizhu.record.template.stat.ast;
 
@@ -26,16 +12,7 @@ import space.yizhu.record.template.io.Writer;
 import space.yizhu.record.template.stat.Ctrl;
 import space.yizhu.record.template.stat.Scope;
 
-/**
- * For 循环控制，支持 List、Map、数组、Collection、Iterator、Iterable
- * Enumeration、null 以及任意单个对象的迭代，简单说是支持所有对象迭代
- *
- * 主要用法：
- * 1：#for(item : list) #(item) #end
- * 2：#for(item : list) #(item) #else content #end
- * 3：#for(i=0; i<9; i++) #(item) #end
- * 4：#for(i=0; i<9; i++) #(item) #else content #end
- */
+
 public class For extends Stat {
 
     private ForCtrl forCtrl;
@@ -57,9 +34,7 @@ public class For extends Stat {
         }
     }
 
-    /**
-     * #for( id : expr)
-     */
+    
     private void forIterator(Env env, Scope scope, Writer writer) {
         Ctrl ctrl = scope.getCtrl();
         Object outer = scope.get("for");
@@ -93,9 +68,7 @@ public class For extends Stat {
         }
     }
 
-    /**
-     * #for(exprList; cond; update)
-     */
+    
     private void forLoop(Env env, Scope scope, Writer writer) {
         Ctrl ctrl = scope.getCtrl();
         Object outer = scope.get("for");
