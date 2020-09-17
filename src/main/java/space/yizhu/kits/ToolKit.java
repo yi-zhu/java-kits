@@ -1,12 +1,9 @@
 package space.yizhu.kits;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
+import com.alibaba.druid.support.json.JSONUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.security.MessageDigest;
@@ -19,13 +16,12 @@ public class ToolKit {
 
     private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6',
             '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-    private static String numberString = "0123456789";
+    public static String numberString = "0123456789";
+
+/*
+*暂时废弃
 
     public static Map<String, Object> getRequestMap(HttpServletRequest request) {
-        return getRequestMap(request, false);
-    }
-
-    public static Map<String, Object> getRequestMap(HttpServletRequest request, boolean isRSA) {
         String str = null;
         try {
             InputStream is = request.getInputStream();
@@ -35,20 +31,37 @@ public class ToolKit {
         } catch (IOException e) {
             SysKit.print(e, "getInputStream");
         }
-        if (isRSA)
-            try {
-                if (str.contains(":")) {
-                    str = str.split(":")[1];
-                    str = RSAKit.decryption(str.substring(0, str.length() - 1));
-                } else
-                    str = RSAKit.decryption(str);
 
-            } catch (Exception e) {
-                SysKit.print(e, "RSA错误");
-            }
+        try {
+            return new Gson().fromJson(str, new TypeToken<Map<String, Object>>() {
+            }.getType());
+        } catch (JsonSyntaxException e) {
+            SysKit.print(e, "请求数据非GSON");
+            Map<String, Object> map = new HashMap<>();
+            map.put("data", str);
+            return map;
+        }
+    }
+    public static Map<String, Object> getRequestMap(HttpServletRequest request, String privkey) {
+        String str = null;
+        try {
+            InputStream is = request.getInputStream();
+            DataInputStream input = new DataInputStream(is);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(input));
+            str = bufferedReader.readLine();
+        } catch (IOException e) {
+            SysKit.print(e, "getInputStream");
+        }
+        try {
+            if (str.contains(":")) {
+                str = str.split(":")[1];
+                str = RSAKit.decryption(str.substring(0, str.length() - 1), privkey);
+            } else
+                str = RSAKit.decryption(str, privkey);
 
-        System.out.println(str);
-
+        } catch (Exception e) {
+            SysKit.print(e, "RSA错误");
+        }
         try {
             return new Gson().fromJson(str, new TypeToken<Map<String, Object>>() {
             }.getType());
@@ -85,6 +98,40 @@ public class ToolKit {
                     + request.getContextPath() + "/" + uri;
         }
     }
+    *
+    public static Map<String, Object> getParameterMap(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+
+        Map<String, String[]> tempMap = request.getParameterMap();
+        Set<String> keys = tempMap.keySet();
+        for (String key : keys) {
+//            byte source [] = request.getParameter(key).getBytes("iso8859-1");
+//            String modelname = new String (source,"UTF-8");
+            resultMap.put(key.toLowerCase(), request.getParameter(key));
+        }
+        System.out.println(resultMap);
+
+        String auth = String.valueOf(resultMap.get("auth"));
+        //权限判断
+        //,.....
+
+//        resultMap.remove("auth");
+        return resultMap;
+    }
+
+    public static Map<String, String> getParameterMapStr(HttpServletRequest request) {
+        Map<String, String> resultMap = new HashMap<String, String>();
+
+        Map<String, String[]> tempMap = request.getParameterMap();
+        Set<String> keys = tempMap.keySet();
+        for (String key : keys) {
+            if (request.getParameter(key) != null)
+                resultMap.put(key.toLowerCase(), request.getParameter(key));
+        }
+//        System.out.println(resultMap);
+        return resultMap;
+    }
+*/
 
     /*生成随机*/
     public static String getRandomCode() {
@@ -346,46 +393,13 @@ public class ToolKit {
     public static String mapToJson(Map<String, Object> map) {
         String json = "";
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            json = mapper.writeValueAsString(map);
+            json= JSONUtils.toJSONString(map);
         } catch (Exception e) {
-            System.out.println("writeValueAsString失败:" + e.getLocalizedMessage());
+            System.out.println("mapToJson失败:" + e.getLocalizedMessage());
         }
         return json;
     }
 
-    public static Map<String, Object> getParameterMap(HttpServletRequest request) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-
-        Map<String, String[]> tempMap = request.getParameterMap();
-        Set<String> keys = tempMap.keySet();
-        for (String key : keys) {
-//            byte source [] = request.getParameter(key).getBytes("iso8859-1");
-//            String modelname = new String (source,"UTF-8");
-            resultMap.put(key.toLowerCase(), request.getParameter(key));
-        }
-        System.out.println(resultMap);
-
-        String auth = String.valueOf(resultMap.get("auth"));
-        //权限判断
-        //,.....
-
-//        resultMap.remove("auth");
-        return resultMap;
-    }
-
-    public static Map<String, String> getParameterMapStr(HttpServletRequest request) {
-        Map<String, String> resultMap = new HashMap<String, String>();
-
-        Map<String, String[]> tempMap = request.getParameterMap();
-        Set<String> keys = tempMap.keySet();
-        for (String key : keys) {
-            if (request.getParameter(key) != null)
-                resultMap.put(key.toLowerCase(), request.getParameter(key));
-        }
-//        System.out.println(resultMap);
-        return resultMap;
-    }
 
     //一维数组转化为二维数组
     public static Object[][] to2Array(Object[] oneArry) {

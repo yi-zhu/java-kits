@@ -11,7 +11,6 @@ import java.security.spec.X509EncodedKeySpec;
 
 public class RSAKit {
 
-
     public static KeyPair creatmyKey() {
         KeyPair myPair;
         long mySeed;
@@ -90,9 +89,9 @@ public class RSAKit {
     }
 
     //加密方法
-    public static String encryption(String value) {
+    public static String encryption(String value,String PUBLICKEY1) {
 
-        String PUBLICKEY1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkRlA29arKpFR7vj4I7D2srJZJ\n" +
+         PUBLICKEY1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkRlA29arKpFR7vj4I7D2srJZJ\n" +
                 "XM504HxEk/S07p+j7fFfni75MZ1G3d0wYT1m7x1e3pyWsvE5XbZr7vVg72GeFoOU\n" +
                 "V/UaUELQLoaCY8eoiASHfDtxcH0+8m9IEsSeyRHTqernOfTBawDiSp1wEBsvu4RZ\n" +
                 "sdH69cVswneqTWhiIwIDAQAB";
@@ -109,9 +108,9 @@ public class RSAKit {
 
 
     //解密方法
-    public static String decryption(String encrypt) {
+    public static String decryption(String encrypt ,String PRIVATEKEY1) {
 //已转成pck8私钥
-        String PRIVATEKEY1 = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALNebnEoRA7AG1gZ\n" +
+         PRIVATEKEY1 = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALNebnEoRA7AG1gZ\n" +
                 "rIIhMas2TCi1ndxUnA+JXHgBQS/+NUb9ARMzm0D9efgBhbD9Vk0uXVr3UvO75aiW\n" +
                 "gjwF1zaLG9Q1MYSm82wajttCmzcfMctIeolUvbN1OB9srVq7hlM0UabBSTCpx4hk\n" +
                 "PkVUROcpG4tQjzLViUxcIprBkY1ZAgMBAAECgYEAoDf9lv5MrJBU3IEyYpqb7z91\n" +
@@ -154,9 +153,6 @@ public class RSAKit {
     }
 
     public static void main(String[] args) {
-        String msg = decryption("\\\"JxQ4KRC3TSrf8PqHvfoC9nJ6VXsbNRy5crlS1hGVBJqx48h+DsgmDml0RKGofZmlTzFzEcN25oLCM1DjUnKnGhNPBywnLKY6vinvIUAnxt7IHTTmzdHJF7GfhPNmz2wmA0Sxdru7GpPJ5pPna\\\\\\/lEMYSfsPtmLmHEeNGuaXoryRc=\\\"");
-
-        SysKit.print(msg);
 
      /*
 

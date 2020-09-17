@@ -75,10 +75,10 @@ public class HttpKit {
     }
 
 
-    public static String httpPost(String url, Map<String, Object> map) {
+    public static String httpPost(String url, Map<String, Object> map,String pubkey) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         Map<String, String> req = new HashMap<>();
-        req.put("param", RSAKit.encryption(new Gson().toJson(map)));
+        req.put("param", RSAKit.encryption(new Gson().toJson(map),pubkey));
 
         JSONObject jsonObject = new JSONObject();
 
