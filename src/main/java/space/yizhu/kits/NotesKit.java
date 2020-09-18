@@ -66,6 +66,6 @@ public class NotesKit {
     }
 
     public static void main(String[] args) {
-        clearNotes("D:\\work\\platform\\template2020kits\\src\\main\\java\\space\\yizhu\\kits\\StrKit.java");
+        clearNotes("D:\\work\\unicom\\gitlab\\nlpt-java\\unifast-nlpt-meeting\\src\\main\\java\\cn\\chinaunicom\\sdsi\\cloud\\webservice\\user");
     }
 }
