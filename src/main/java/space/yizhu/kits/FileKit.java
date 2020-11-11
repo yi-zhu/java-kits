@@ -44,9 +44,9 @@ public class FileKit {
             strs = reader.lines().collect(Collectors.joining());
             reader.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         } catch (IOException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         return strs;
     }
@@ -74,9 +74,9 @@ public class FileKit {
             strs = reader.lines().collect(Collectors.joining());
             reader.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         } catch (IOException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         return strs;
     }
@@ -106,9 +106,9 @@ public class FileKit {
             }
             reader.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         } catch (IOException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         return strs;
     }

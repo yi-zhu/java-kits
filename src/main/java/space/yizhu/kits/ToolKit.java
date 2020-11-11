@@ -2,6 +2,7 @@ package space.yizhu.kits;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import space.yizhu.bean.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -390,7 +391,7 @@ public class ToolKit {
         return m.find();
     }
 
-    public static String mapToJson(Map<String, Object> map) {
+    public static String mapToJson(Map map) {
         String json = "";
         try {
             json= JSONUtils.toJSONString(map);
@@ -409,7 +410,7 @@ public class ToolKit {
     }
 
 
-    public static Object mapToBean(Map<String, String> map, Class<?> beanClass) throws Exception {
+    public static Object mapToBean(Map map, Class<?> beanClass) throws Exception {
         if (map == null)
             return null;
 
@@ -428,4 +429,23 @@ public class ToolKit {
         return obj;
 
     }
+    public static Map beanToMap(  Object obj ) throws Exception {
+        if (obj == null)
+            return null;
+        Map map = new HashMap();
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            int mod = field.getModifiers();
+            if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+                continue;
+            }
+            field.setAccessible(true);
+            if (null!=field.get(obj))
+            map.put(field.getName(), field.get(obj));
+        }
+        return map;
+
+    }
+
+
 }

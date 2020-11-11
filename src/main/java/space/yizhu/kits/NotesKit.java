@@ -49,7 +49,7 @@ public class NotesKit {
             count++;
             System.out.println("-----文件处理完成---" + count);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
     }
 

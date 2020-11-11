@@ -45,7 +45,7 @@ public class DateKit {
         try {
             return DateUtils.parseDate(date, new String[]{"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"});
         } catch (ParseException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         return null;
     }
@@ -74,7 +74,7 @@ public class DateKit {
                 cal.add(Calendar.DATE, 1);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         return all;
     }

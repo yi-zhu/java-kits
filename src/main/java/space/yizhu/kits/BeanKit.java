@@ -70,7 +70,7 @@ public class BeanKit {
             try {
                 if(baos!=null) baos.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                 SysKit.print(e);
             }
             output.close();
         }

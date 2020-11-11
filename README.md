@@ -11,6 +11,14 @@ this is a kits for java
 
 此工具如侵犯到某些人或组织的权益,请尽快与我联系,特此声明!
 
+<dependency>
+  <groupId>space.yizhu</groupId>
+  <artifactId>kits</artifactId>
+  <version>1.0.2</version>
+</dependency>
+
+
+
 @yizhu 
 http://yizhu.space
 https://yizhu.space

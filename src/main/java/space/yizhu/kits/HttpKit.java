@@ -1,6 +1,8 @@
 package space.yizhu.kits;/* Created by xiuxi on 2018/11/2.*/
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -69,7 +71,7 @@ public class HttpKit {
             }
             bReader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         return resultStr.toString();
     }
@@ -109,6 +111,30 @@ public class HttpKit {
         return result;
     }
 
+    public static String httpPost(String url, String json) {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+
+        HttpPost httpPost = new HttpPost(url);
+        StringEntity entity = new StringEntity(json, "utf-8");
+        entity.setContentEncoding("UTF-8");
+        entity.setContentType("application/json");
+        httpPost.setEntity(entity);
+        CloseableHttpResponse response = null;
+        try {
+            response = httpclient.execute(httpPost);
+        } catch (IOException e) {
+            SysKit.print(e);
+        }
+        HttpEntity entity1 = response.getEntity();
+        String result = null;
+        try {
+            result = EntityUtils.toString(entity1);
+        } catch (ParseException | IOException e) {
+            SysKit.print(e);
+        }
+        return result;
+    }
+
     public static String httpPostNoRSA(String url, String json) throws KeyManagementException {
         HttpPost httpPost = new HttpPost(url);
         StringEntity entity = new StringEntity(json, "utf-8");//解决中文乱码问题
@@ -119,7 +145,7 @@ public class HttpKit {
         try {
             ctx = SSLContext.getInstance("TLS");
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         X509TrustManager tm = new X509TrustManager() {
             @Override
@@ -186,7 +212,7 @@ public class HttpKit {
         try {
             result = EntityUtils.toString(entity1);
         } catch (ParseException | IOException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         return result;
     }
@@ -238,7 +264,7 @@ public class HttpKit {
         try {
             result = EntityUtils.toString(entity1);
         } catch (ParseException | IOException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         return result;
     }
@@ -263,12 +289,12 @@ public class HttpKit {
                 result = EntityUtils.toString(entity);
             }
         } catch (ParseException | IOException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         } finally {
             try {
                 response.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                 SysKit.print(e);
             }
         }
         return result;
@@ -276,155 +302,11 @@ public class HttpKit {
 
 
     public static void main(String[] args) {
-/*//李文峰测试
-        String str = "[\n" +
-                "  {\n" +
-                "    \"historyTroubleInfo\": [\n" +
-                "      {\n" +
-                "        \"troubleType\": 5,\n" +
-                "        \"uid\": \"cd777604149c46bc8ff1c691fd8da752\",\n" +
-                "        \"equipmentState\": 4,\n" +
-                "        \"troubleTime\": 1550127299355,\n" +
-                "        \"placeId\": \"\",\n" +
-                "        \"tenantId\": \"\",\n" +
-                "        \"equipmentId\": \"\",\n" +
-                "        \"projectId\": \"\",\n" +
-                "        \"equipmentType\": 1.0\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"gateWayNumber\": \"8e4f3f30-ce45-49ab-bea9-ff35849b1f2e\",\n" +
-                "    \"imei\": \"864814042953900\",\n" +
-                "    \"realTimeDataInfo\": [\n" +
-                "      {\n" +
-                "        \"value6\": \"8\",\n" +
-                "        \"value5\": \"0\",\n" +
-                "        \"value7\": \"53906769\",\n" +
-                "        \"value2\": \"20\",\n" +
-                "        \"value1\": \"108\",\n" +
-                "        \"value4\": \"90\",\n" +
-                "        \"value3\": \"1\",\n" +
-                "        \"placeId\": \"\",\n" +
-                "        \"equipmentId\": \"\",\n" +
-                "        \"equipmentType\": 1.0,\n" +
-                "        \"receiveTime\": 1550127299355,\n" +
-                "        \"equipmentState\": 3,\n" +
-                "        \"tenantId\": \"\",\n" +
-                "        \"projectId\": \"\"\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"gatewayState\": 1\n" +
-                "  }\n" +
-                "]";
-
-        try {
-            httpPostNoRSA("http://192.168.11.31/auth/api/equipmentApi/synchronousData", str);
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
-*/
-
-
-
-/*        Map map = new HashMap();
-        map.put("param", "j6C5vt4WeJbS3hO90+STlAJl9XRTTUvscoUU8oaeFnwYis+XNut+oLUQX\\/YGe+J1fhMPQHe9+MuTWzLMSEh7q\\/Ou2QttaAeVt4wk2BTGbu8+iEe34vn1T6L5e5a37tDDJU1hVv2xXn4g6Npm0Ukj8DvY3G+a8\\/efqi\\/hBV3gNzw=");
-        String ret = null;
-        try {
-            ret = httpPostLocalTest("https://ioicube.com:8891/container/zmkm", map);
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        SysKit.print(ret);*/
-       /* Map ret = new HashMap();
-
-        ret.put("code", 0);
-        ret.put("type", 1);
-        ret.put("devid", "00000000f561352b");
-        ret.put("orderid", "c124997600993306");
-        ret.put("adds", new ArrayList<>());
-        ret.put("down", new ArrayList<>());
-        ret.put("msg", "deviceOpenRes success");
-        ret.put("timestamp", new Date().getTime());
-        String retStr = HttpKit.httpPost("https://testc.wemall.com.cn/callbackapi/order/order", ret);
-        retStr = retStr.split(":")[1];
-        retStr = RSAKit.decryption(retStr.substring(0, retStr.length() - 1));
-        SysKit.print(retStr);*/
-        /*new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<String> noids = new ArrayList<>();
-                for (int i = 0; i < 10; i++) {
-                    noids.add("ONE" + ToolKit.getRandomCode());
-                }
-                for (String str : noids) {
-                    String json = "{\"IMEI\":\""+str+"\",\"name\":\"ONE\",\"manufacturerId\":\"ST\",\"manufacturerName\":\"ST\",\"deviceType\":\"Smoke\",\"model\":\"517N01\",\"protocolType\":\"CoAP\"}";
-                    SysKit.print(httpPostNoRSA("http://ioicube.com:7890/iotNb/addSmoke", json));
-                }
-            }
-        }).start();        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<String> noids = new ArrayList<>();
-                for (int i = 0; i < 10; i++) {
-                    noids.add("TWO" + ToolKit.getRandomCode());
-                }
-                for (String str : noids) {
-                    String json = "{\"IMEI\":\""+str+"\",\"name\":\"TWO\",\"manufacturerId\":\"ST\",\"manufacturerName\":\"ST\",\"deviceType\":\"Smoke\",\"model\":\"517N01\",\"protocolType\":\"CoAP\"}";
-                    SysKit.print(httpPostNoRSA("http://ioicube.com:7890/iotNb/addSmoke", json));
-                }
-            }
-        }).start();        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<String> noids = new ArrayList<>();
-                for (int i = 0; i < 10; i++) {
-                    noids.add("TREE" + ToolKit.getRandomCode());
-                }
-                for (String str : noids) {
-                    String json = "{\"IMEI\":\""+str+"\",\"name\":\"TREE\",\"manufacturerId\":\"ST\",\"manufacturerName\":\"ST\",\"deviceType\":\"Smoke\",\"model\":\"517N01\",\"protocolType\":\"CoAP\"}";
-                    SysKit.print(httpPostNoRSA("http://ioicube.com:7890/iotNb/addSmoke", json));
-                }
-            }
-        }).start();
-
-
-*/
-
-//    }
-
-//                Map ret = new HashMap();
-//                map.put("param","\\\"QMtmsSY+FNJ6qFc+wvPUi9z1BByJU9bdSEv0eHW8F1QZLlZTslvTJKRimO3\\\\\\/jwQeEE9XPAJYhHKcLyOKbDXon1GK6Vzckp1bx5o4Lm7J7+PB\\\\\\/kHeSg9nBG+Zy6zQsxCPB2ZJVQo0EZsWYm0iz4\\\\\\/m\\\\\\/wDYr6rGe\\\\\\/S6xPbxcJg20mUjvLkljo2+QCgjUGitHZeJDBwQf7hD54tnv8C0U5ziam4TKlImKV\\\\\\/dC95+8dVH38K7q0i\\\\\\/xAmGvlIj0CsFagzdyVj0n2KgMIX3mZHInTMpEQmYlCDvCTh2h10+9CSpHRNrQX1\\\\\\/78vaRyQQO027y0Dqt6bVm0gd1xAChSx\\\\\\/wHjsyQ==\\\"");
-//                String ret = httpPostLocalTest("http://localhost:8890/zmkm/getVedio", map);
-//                String ret = httpPostLocalTest("http://localhost:8890/container/deviceOpenS", map);
-//                SysKit.print(ret);
-//手动结束订单
-/*
-        Map ret = new HashMap();
-
-        ret.put("code", 0);
-
-        ret.put("type", "1");
-        ret.put("devid", "00000000f561352b");
-        ret.put("orderid", "c305620243037389");
-        ret.put("adds", new ArrayList<>());
-        ret.put("down", new ArrayList<>());
-        ret.put("msg", "deviceOpenRes success");
-        ret.put("timestamp", new Date().getTime());
-        SysKit.print(httpPost("https://testc.wemall.com.cn/callbackapi/order/order", ret));
-*/
-
-
-//        try {
-//            load("http://ioicube.com:8895/iotNb/synchronousData", "");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-        Map map = new HashMap();
-        map.put("param", "AodjQMSVMdL7z1lBQu9PK654bOaVreSRIl3XQuq6Vg5Nd4kfeUwy2uW6aFhEzq031LZnbBB5oi31wqlY1H\\/ItAWawkioIR6Zzd+AnPBzigyMo+zzvOuYAoVO5Ha0y9lexCoe7amST3PV0lMxrwrn8YWlKcSlFk7j459PIGISPeA=");
-
-        SysKit.print(httpPostNoRSA("https://ioicube.com:8895/container/zmkm", map));
+        String str = "{\"busitype\":\"01\",\"actiontype\":\"01\",\"data\":{\"zwfwid\":\"20200930104307420900\",\"opertype\":\"zw03\",\"isfinish\":\"N\",\"operman\":\"\",\"opertime\":\"2020-09-30 10:44:25\",\"remark\":\"\",\"busino\":\"0110GG289494\",\"docinfo\":[{\"doc_id\":\"\",\"type\":\"pdf\",\"cllx\":\"00004\"},{\"doc_id\":\"\",\"type\":\"pdf\",\"cllx\":\"00005\"},{\"doc_id\":\"\",\"type\":\"pdf\",\"cllx\":\"00014\"},{\"doc_id\":\"\",\"type\":\"pdf\",\"cllx\":\"00015\"},{\"doc_id\":\"\",\"type\":\"pdf\",\"cllx\":\"00016\"},{\"doc_id\":\"\",\"type\":\"pdf\",\"cllx\":\"00017\"},{\"doc_id\":\"\",\"type\":\"pdf\",\"cllx\":\"00020\"},{\"doc_id\":\"\",\"type\":\"pdf\",\"cllx\":\"00043\"}]}}";
+      JsonObject jsonObject=  new JsonObject();
+        jsonObject.getAsJsonObject(str);
+        JSONUtils.parse(str);
+        SysKit.print(httpPost("http://221.214.107.228:8080/bvpmis/zwfw/uniteJsonInterface.bv",str));
     }
 
 }

@@ -3,6 +3,8 @@ package space.yizhu.kits;/* Created by xiuxi on 2018/11/5.*/
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +31,7 @@ public class RedisKit {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -52,7 +54,7 @@ public class RedisKit {
         try {
             return redisTemplate.hasKey(key);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -95,7 +97,23 @@ public class RedisKit {
             redisTemplate.opsForValue().set(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
+            return false;
+        }
+
+    }
+    /**
+     * 普通缓存放入
+     * @param key 键
+     * @param value 值
+     * @return true成功 false失败
+     */
+    public static boolean setIfAbsent(String key,Object value) {
+        try {
+            redisTemplate.opsForValue().setIfAbsent(key, value);
+            return true;
+        } catch (Exception e) {
+             SysKit.print(e);
             return false;
         }
 
@@ -117,7 +135,7 @@ public class RedisKit {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -176,10 +194,12 @@ public class RedisKit {
             redisTemplate.opsForHash().putAll(key, map);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
+
+
 
     /**
      * HashSet 并设置时间
@@ -196,7 +216,7 @@ public class RedisKit {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -213,7 +233,7 @@ public class RedisKit {
             redisTemplate.opsForHash().put(key, item, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -234,7 +254,7 @@ public class RedisKit {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -290,7 +310,7 @@ public class RedisKit {
         try {
             return redisTemplate.opsForSet().members(key);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return null;
         }
     }
@@ -305,7 +325,7 @@ public class RedisKit {
         try {
             return redisTemplate.opsForSet().isMember(key, value);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -320,7 +340,7 @@ public class RedisKit {
         try {
             return redisTemplate.opsForSet().add(key, values);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return 0;
         }
     }
@@ -338,7 +358,7 @@ public class RedisKit {
             if(time>0) expire(key, time);
             return count;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return 0;
         }
     }
@@ -352,7 +372,7 @@ public class RedisKit {
         try {
             return redisTemplate.opsForSet().size(key);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return 0;
         }
     }
@@ -368,7 +388,7 @@ public class RedisKit {
             Long count = redisTemplate.opsForSet().remove(key, values);
             return count;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return 0;
         }
     }
@@ -385,7 +405,7 @@ public class RedisKit {
         try {
             return redisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return null;
         }
     }
@@ -399,7 +419,7 @@ public class RedisKit {
         try {
             return redisTemplate.opsForList().size(key);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return 0;
         }
     }
@@ -414,7 +434,7 @@ public class RedisKit {
         try {
             return redisTemplate.opsForList().index(key, index);
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return null;
         }
     }
@@ -430,10 +450,12 @@ public class RedisKit {
             redisTemplate.opsForList().rightPush(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
+
+
 
     /**
      * 将list放入缓存
@@ -448,7 +470,7 @@ public class RedisKit {
             if (time > 0) expire(key, time);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -464,7 +486,7 @@ public class RedisKit {
             redisTemplate.opsForList().rightPushAll(key, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -482,7 +504,7 @@ public class RedisKit {
             if (time > 0) expire(key, time);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -499,7 +521,7 @@ public class RedisKit {
             redisTemplate.opsForList().set(key, index, value);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return false;
         }
     }
@@ -516,9 +538,119 @@ public class RedisKit {
             Long remove = redisTemplate.opsForList().remove(key, count, value);
             return remove;
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
             return 0;
         }
+    }
+
+    /**
+     * 序列化
+     */
+    public static byte[] ser(Object o)
+    {
+
+        ObjectOutput oos=null;
+        ByteArrayOutputStream baos=null;
+        try {
+            //创建一个byte的数组的流
+            baos=new ByteArrayOutputStream();
+            //创建对象流将对象写入到byte数组里
+            oos=new ObjectOutputStream(baos);
+            //进行写入操作
+            oos.writeObject(o);
+            //将byte数组的对象进行转换为byte的数组
+            return baos.toByteArray();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+             SysKit.print(e);
+        }
+
+
+
+        return null;
+
+
+    }
+    /**
+     * 反序列化
+     */
+    public static Object unser(byte[]bs)
+    {
+        ByteArrayInputStream bais=null;
+        //创建一个byte的数组的读入流对其byte数组
+        bais =new ByteArrayInputStream(bs);
+        try {
+            //对象的输入流，用于读取对象
+            ObjectInputStream objectInputStream=new ObjectInputStream(bais);
+            //将byte格式的转化为对象
+            return objectInputStream.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+
+             SysKit.print(e);
+            return null;
+        }
+
+    }/**
+     * 序列化的集合
+     */
+    public static byte[] serlist(List<?>list)
+    {
+        ObjectOutputStream oos= null;
+        //
+        ByteArrayOutputStream byteArrayOutputStream=null;
+        byte[] bytes =null;
+        byteArrayOutputStream=new ByteArrayOutputStream();
+        try {
+            oos=new ObjectOutputStream(byteArrayOutputStream);
+            for (Object o : list) {
+                oos.writeObject(o);
+
+            }
+            bytes =byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+             SysKit.print(e);
+        }
+
+        return bytes;
+    }
+    /**
+     * 反序列化的集合
+     */
+    public  static List<?> unserList(byte[] bytes)
+    {
+        List<Object>list=new ArrayList<>();
+        ByteArrayInputStream bais =null;
+        ObjectInputStream ois=null;
+        bais=new ByteArrayInputStream(bytes);
+        try {
+            ois =new ObjectInputStream(bais);
+            while (bais.available()>0)
+            {
+                Object object =ois.readObject();
+                if (object==null) {
+                    break;
+
+                }
+                list.add(object);
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+             SysKit.print(e);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+             SysKit.print(e);
+        }
+
+        return list;
+    }
+
+/**
+ * @param key 传入key
+ * @return T 返回bean
+ * */
+    public  static  <T> T getBean(String key){
+        return (T)RedisKit.unser(Base64Kit.decode(String.valueOf(RedisKit.get(String.valueOf(key)))));
     }
 
 }

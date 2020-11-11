@@ -11,7 +11,25 @@ public class SysKit {
     private static String prefix = "系统";
     private static Calendar lastDate = Calendar.getInstance();
     private static ConcurrentHashMap<String, Calendar> timeMap = new ConcurrentHashMap<>();
+    private static String packageName = null;
 
+    /**
+     * Getter for property 'packageName'.
+     *
+     * @return Value for property 'packageName'.
+     */
+    public static String getPackageName() {
+        return packageName;
+    }
+
+    /**
+     * Setter for property 'packageName'.
+     *
+     * @param packageName Value to set for property 'packageName'.
+     */
+    public static void setPackageName(String packageName) {
+        SysKit.packageName = packageName;
+    }
 
     //--system信息
     public static String getSysInfo(String key) {
@@ -33,9 +51,9 @@ public class SysKit {
 
             objectNames = mBeanServer.queryNames(new ObjectName("Catalina:type=Connector,*"), null);
         } catch (MalformedObjectNameException e) {
-            e.printStackTrace();
+            SysKit.print(e);
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            SysKit.print(e);
         }
         if (objectNames == null || objectNames.size() <= 0) {
             throw new IllegalStateException("没有发现JVM中关联的MBeanServer : "
@@ -54,13 +72,13 @@ public class SysKit {
 
             }
         } catch (AttributeNotFoundException e) {
-            e.printStackTrace();
+            SysKit.print(e);
         } catch (InstanceNotFoundException e) {
-            e.printStackTrace();
+            SysKit.print(e);
         } catch (MBeanException e) {
-            e.printStackTrace();
+            SysKit.print(e);
         } catch (ReflectionException e) {
-            e.printStackTrace();
+            SysKit.print(e);
         }
 
         return null;
@@ -74,32 +92,38 @@ public class SysKit {
     }
 
     public static void print(String msg) {
-        if (msg == null)
+        if (msg == null) {
             return;
-        if (msg.length() > 1)
-            if (msg.contains("br"))
+        }
+        if (msg.length() > 1) {
+            if (msg.contains("br")) {
                 System.out.println(DateKit.now() + " - [" + prefix + "]:" + msg.substring(0, msg.indexOf("br")) + take());
-            else
+            } else {
                 System.out.println(DateKit.now() + " - [" + prefix + "]:" + msg + take());
+            }
+        }
 
     }
 
     public static void print(String msg, String lab) {
         lab = lab.toLowerCase();
-        if (lab.contains("test"))
+        if (lab.contains("test")) {
             print(msg);
-        else if (null == timeMap.get(lab)) {
-            if (Calendar.getInstance().get(Calendar.DATE) != lastDate.get(Calendar.DATE))
+        } else if (null == timeMap.get(lab)) {
+            if (Calendar.getInstance().get(Calendar.DATE) != lastDate.get(Calendar.DATE)) {
                 timeMap.clear();
-            if (!lab.startsWith("self"))
+            }
+            if (!lab.startsWith("self")) {
                 System.out.println(DateKit.now() + " - [" + lab + "]:" + msg + " - " + "开始计时 ------");
+            }
             timeMap.put(lab, Calendar.getInstance());
 
         } else {
             System.out.println(DateKit.now() + " - [" + lab + "]:" + msg + " - " + "结束计时," + take(timeMap.get(lab)));
             timeMap.remove(lab);
-            if (Calendar.getInstance().get(Calendar.DATE) != lastDate.get(Calendar.DATE))
+            if (Calendar.getInstance().get(Calendar.DATE) != lastDate.get(Calendar.DATE)) {
                 timeMap.clear();
+            }
         }
     }
 
@@ -112,27 +136,29 @@ public class SysKit {
     }
 
     private static String take(Calendar lastDateT) {
-        if (lastDateT == null)
+        if (lastDateT == null) {
             lastDateT = Calendar.getInstance();
+        }
         String prefix = " - 用时:";
         long n = Calendar.getInstance().getTimeInMillis();
         long range = n - lastDateT.getTimeInMillis();
 //        long len = 12 * 24 * 60 * 60 * 1000;
         lastDate = Calendar.getInstance();
-        if (range > 12 * 24 * 60 * 60 * 1000)
+        if (range > 12 * 24 * 60 * 60 * 1000) {
             return prefix + CharKit.doubleKeepDecimal(range / (12 * 24 * 60 * 60 * 1000 * 1.0)) + "年";
-        else if (range > 24 * 60 * 60 * 1000)
+        } else if (range > 24 * 60 * 60 * 1000) {
             return prefix + CharKit.doubleKeepDecimal(range / (24 * 60 * 60 * 1000 * 1.0)) + "天";
-        else if (range > 60 * 60 * 1000)
+        } else if (range > 60 * 60 * 1000) {
             return prefix + CharKit.doubleKeepDecimal(range / (60 * 60 * 1000 * 1.0)) + "小时";
-        else if (range > 60 * 1000)
+        } else if (range > 60 * 1000) {
             return prefix + CharKit.doubleKeepDecimal(range / (60 * 1000 * 1.0)) + "分钟";
-        else if (range > 1000)
+        } else if (range > 1000) {
             return prefix + CharKit.doubleKeepDecimal(range / (1000 * 1.0)) + "秒";
-        else if (range < 1000)
+        } else if (range < 1000) {
             return prefix + CharKit.doubleKeepDecimal(range / (1.0)) + "毫秒";
-        else
+        } else {
             return prefix + CharKit.doubleKeepDecimal(range / (1.0)) + "毫秒";
+        }
     }
 
     public static String take(String lab) {
@@ -141,27 +167,37 @@ public class SysKit {
     }
 
     public static void print(Exception msg) {
+        err(msg);
+    }
+    public static void print(Throwable msg) {
+        err(msg);
+    }
+    private static void err(Throwable msg) {
         try {
-            System.err.println(DateKit.now() + " - [" + msg.getStackTrace()[0].getMethodName() + msg.getStackTrace()[0].getLineNumber() + "]:" + msg.toString() + take());
+            if (getPackageName() != null) {
+                for (StackTraceElement traceElement : msg.getStackTrace()) {
+                    if (traceElement.getClassName().contains(getPackageName())) {
+                        System.err.println(DateKit.now() + " - [" + traceElement.getClassName() + traceElement.getLineNumber() + "]:" + msg.toString() + take());
+                    }
+                }
+            } else {
+                System.err.println(DateKit.now() + " - [" + msg.getStackTrace()[0].getMethodName() + msg.getStackTrace()[0].getLineNumber() + "]:" + msg.toString() + take());
+            }
+
+
         } catch (Exception e) {
-            e.printStackTrace();
+            SysKit.print(e);
             System.err.println(DateKit.now() + msg.getLocalizedMessage() + take());
         }
     }
 
-    public static void print(Throwable msg) {
-        try {
-            System.err.println(DateKit.now() + " - [" + msg.getStackTrace()[0].getMethodName() + msg.getStackTrace()[0].getLineNumber() + "]:" + msg.getLocalizedMessage() + take());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public static void print(Throwable msg, String prefix) {
         try {
             System.err.println(DateKit.now() + " - [" + prefix + "]:" + msg.getLocalizedMessage() + take());
         } catch (Exception e) {
-            e.printStackTrace();
+            SysKit.print(e);
         }
     }
 
@@ -169,7 +205,7 @@ public class SysKit {
         try {
             System.err.println(DateKit.now() + " - [" + prefix + "]:" + (msg.getLocalizedMessage() == null ? msg.getMessage() : msg.getLocalizedMessage()) + take());
         } catch (Exception e) {
-            e.printStackTrace();
+            SysKit.print(e);
         }
     }
 
@@ -183,6 +219,21 @@ public class SysKit {
 
     //---print
 
+    public static void main(String[] args) {
+        String str = null;
+        try {
+            Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            print(e);
+        }
+        print("hh");
+        try {
+            Integer.parseInt(str);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        print("12");
+    }
 
     public String getPrefix() {
         return prefix;
@@ -191,6 +242,5 @@ public class SysKit {
     public void setPrefix(String prefix) {
         SysKit.prefix = prefix;
     }
-
 
 }

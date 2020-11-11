@@ -344,7 +344,7 @@ public class ModelKit {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
     }
 

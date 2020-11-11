@@ -52,7 +52,7 @@ public class ClassKit {
             Class<? extends Model<?>> classModel = (Class<? extends Model<?>>) classObj.getClass();
             return classModel.getMethod("getMe").invoke(classObj);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException | InstantiationException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
 
         return null;
@@ -87,11 +87,11 @@ public class ClassKit {
                     SysKit.print(className + "创建成功" + classModel.getName());
                     return classModel.getMethod("getMe").invoke(classObj);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | ClassNotFoundException | NoSuchMethodException e) {
-                    e.printStackTrace();
+                     SysKit.print(e);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
 */
 
@@ -101,7 +101,7 @@ public class ClassKit {
         try {
             stringObject = new StringObject(new URI(className + ".java"), Kind.SOURCE, classContent);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
         JavaCompiler.CompilationTask task = compiler.getTask(null, classJavaFileManager, null, null, null, Arrays.asList(stringObject));
         if (task.call()) {
@@ -113,7 +113,7 @@ public class ClassKit {
                 Class<? extends Model<?>> classModel = (Class<? extends Model<?>>) classObj.getClass();
                 return classModel.getMethod("getMe").invoke(classObj);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException | InstantiationException e) {
-                e.printStackTrace();
+                 SysKit.print(e);
             }
 
         }

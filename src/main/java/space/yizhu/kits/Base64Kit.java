@@ -204,7 +204,7 @@ public class Base64Kit {
         try {
             decoder2File(data, "月宫");
         } catch (Exception e) {
-            e.printStackTrace();
+             SysKit.print(e);
         }
 
     }
