@@ -61,10 +61,10 @@ public class DbKit {
             if (null != set.getValue())
                 activeRecordPlugin.addMapping(set.getKey(), (Class<? extends Model<?>>) set.getValue().getClass());
         }
-        if (null!=mappings&&mappings.size()>0){
-            for (Map.Entry<String, Class<? extends Model<?>>> enty:mappings.entrySet())
-                if (null!=enty.getKey()&&null!= enty.getValue())
-                activeRecordPlugin.addMapping(enty.getKey(), enty.getValue());
+        if (null != mappings && mappings.size() > 0) {
+            for (Map.Entry<String, Class<? extends Model<?>>> enty : mappings.entrySet())
+                if (null != enty.getKey() && null != enty.getValue())
+                    activeRecordPlugin.addMapping(enty.getKey(), enty.getValue());
         }
 
         if (druidPlugin != null) {
@@ -87,6 +87,7 @@ public class DbKit {
             }
             if (null != table)
                 mappings.put(table, cls);
+            return;
         }
         activeRecordPlugin.stop();
         activeRecordPlugin.addMapping(table, cls);
@@ -104,6 +105,7 @@ public class DbKit {
             for (Class<? extends Model<?>> cls : clss)
                 if (null != cls && null != table)
                     mappings.put(table, cls);
+            return;
         }
         activeRecordPlugin.stop();
         for (Class<? extends Model<?>> cls : clss)
