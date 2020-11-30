@@ -1,6 +1,9 @@
 package space.yizhu.bean;/* Created by yi on 9/18/2020.*/
 
-public class Test {
+/**
+ * @author yi
+ */
+public class Test  extends BaseModel<Test>{
     private String id ,code,name,creator,updator,remark,create_date, update_date;
 
     public String getId() {

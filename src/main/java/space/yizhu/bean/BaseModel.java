@@ -307,20 +307,20 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
         return getStr("creator");
     }
 
-    public String updator() {
+    public String mender() {
         return getStr("updator");
     }
 
-    public String remark() {
-        return getStr("remark");
+    public Integer is_del() {
+        return getInt("is_del");
     }
 
     public String create_date() {
         return getStr("create_date");
     }
 
-    public String update_date() {
-        return getStr("update_date");
+    public String modify_time() {
+        return getStr("modify_time");
     }
 
 }

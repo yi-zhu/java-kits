@@ -66,7 +66,7 @@ public class PathKit {
      * 否则在某些情况下会获取到 tomcat 的 ClassLoader，那么路径值将是
      * TOMCAT_HOME/lib
      *
-     * issue: https://gitee.com/jfinal/jfinal/issues/ID428#note_699360
+     * issue: https://gitee.JFDb/issues/ID428#note_699360
      */
     private static ClassLoader getClassLoader() {
         ClassLoader ret = Thread.currentThread().getContextClassLoader();

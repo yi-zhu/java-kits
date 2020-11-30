@@ -7,26 +7,30 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import org.yaml.snakeyaml.Yaml;
 import space.yizhu.record.core.Const;
 
 /**
- * Prop. Prop can load properties file from CLASSPATH or File object.
+ * ConfigFile. ConfigFile can load properties file from CLASSPATH or File object.
  */
 public class ConfigFile {
 
     protected Properties properties;
+    private boolean isYml = false;
 
     /**
-     * 支持 new Prop().appendIfExists(...)
+     * 支持 new ConfigFile().appendIfExists(...)
      */
     public ConfigFile() {
         properties = new Properties();
     }
 
     /**
-     * Prop constructor.
+     * ConfigFile constructor.
      * @see #ConfigFile(String, String)
      */
     public ConfigFile(String fileName) {
@@ -34,14 +38,14 @@ public class ConfigFile {
     }
 
     /**
-     * Prop constructor
+     * ConfigFile constructor
      * <p>
      * Example:<br>
-     * Prop prop = new Prop("my_config.txt", "UTF-8");<br>
-     * String userName = prop.get("userName");<br><br>
+     * ConfigFile ConfigFile = new ConfigFile("my_config.txt", "UTF-8");<br>
+     * String userName = ConfigFile.get("userName");<br><br>
      *
-     * prop = new Prop("com/jfinal/file_in_sub_path_of_classpath.txt", "UTF-8");<br>
-     * String value = prop.get("key");
+     * ConfigFile = new ConfigFile("file_in_sub_path_of_classpath.txt", "UTF-8");<br>
+     * String value = ConfigFile.get("key");
      *
      * @param fileName the properties file's name in classpath or the sub directory of classpath
      * @param encoding the encoding
@@ -49,11 +53,16 @@ public class ConfigFile {
     public ConfigFile(String fileName, String encoding) {
         InputStream inputStream = null;
         try {
-            inputStream = getClassLoader().getResourceAsStream(fileName);        // properties.load(Prop.class.getResourceAsStream(fileName));
+            inputStream = getClassLoader().getResourceAsStream(fileName);        // properties.load(ConfigFile.class.getResourceAsStream(fileName));
             if (inputStream == null) {
                 throw new IllegalArgumentException("Properties file not found in classpath: " + fileName);
             }
+
             properties = new Properties();
+            if (fileName.endsWith("yml")){
+                isYml = true;
+                properties=  new Yaml().loadAs(new InputStreamReader(inputStream, encoding),Properties.class);
+            }else
             properties.load(new InputStreamReader(inputStream, encoding));
         } catch (IOException e) {
             throw new RuntimeException("Error loading properties file.", e);
@@ -72,7 +81,7 @@ public class ConfigFile {
     }
 
     /**
-     * Prop constructor.
+     * ConfigFile constructor.
      * @see #ConfigFile(File, String)
      */
     public ConfigFile(File file) {
@@ -80,11 +89,11 @@ public class ConfigFile {
     }
 
     /**
-     * Prop constructor
+     * ConfigFile constructor
      * <p>
      * Example:<br>
-     * Prop prop = new Prop(new File("/var/config/my_config.txt"), "UTF-8");<br>
-     * String userName = prop.get("userName");
+     * ConfigFile ConfigFile = new ConfigFile(new File("/var/config/my_config.txt"), "UTF-8");<br>
+     * String userName = ConfigFile.get("userName");
      *
      * @param file the properties File object
      * @param encoding the encoding
@@ -101,6 +110,10 @@ public class ConfigFile {
         try {
             inputStream = new FileInputStream(file);
             properties = new Properties();
+            if (file.getName().endsWith("yml")){
+                isYml = true;
+                properties=  new Yaml().loadAs(new InputStreamReader(inputStream, encoding),Properties.class);
+            }else
             properties.load(new InputStreamReader(inputStream, encoding));
         } catch (IOException e) {
             throw new RuntimeException("Error loading properties file.", e);
@@ -115,7 +128,7 @@ public class ConfigFile {
 
     public ConfigFile append(ConfigFile configFile) {
         if (configFile == null) {
-            throw new IllegalArgumentException("prop can not be null");
+            throw new IllegalArgumentException("ConfigFile can not be null");
         }
         properties.putAll(configFile.getProperties());
         return this;
@@ -161,11 +174,56 @@ public class ConfigFile {
     }
 
     public String get(String key) {
-        return properties.getProperty(key);
+        return getV(key,null)==null?null: String.valueOf(getV(key,null));
     }
 
+    public Object getObj(String key) {
+
+        return getV(key,null);
+    }
+
+    private Object getV(String key,String def){
+        Object ret=def;
+        if (isYml){
+            if (null!=properties.get(key)){
+                return properties.get(key).toString();
+            }else {
+                String[] strs=key.split("\\.");
+                Object temp=null;
+                String str;
+                for (int i = 0; i < strs.length; i++) {
+                    str = strs[i];
+                    if (str.length()<1) {
+                        continue;
+                    }
+                    if (i==0){
+                        temp = properties.get(str);
+                    }else if (i==strs.length-1){
+                        if (temp instanceof Map){
+                            if (null!=((Map) temp).get(str)) {
+                                ret = ((Map) temp).get(str);
+                            }
+                        }
+                    }else if (null!=temp){
+                        if (temp instanceof Map){
+                            if (null!=((Map) temp).get(str)) {
+                                temp = ((Map) temp).get(str);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }else {
+            ret= properties.getProperty(key);
+        }
+        return ret;
+    }
+
+
     public String get(String key, String defaultValue) {
-        return properties.getProperty(key, defaultValue);
+        return getV(key,defaultValue)==null?defaultValue: String.valueOf(getV(key,defaultValue));
+
     }
 
     public Integer getInt(String key) {
@@ -173,7 +231,7 @@ public class ConfigFile {
     }
 
     public Integer getInt(String key, Integer defaultValue) {
-        String value = properties.getProperty(key);
+        String value = get(key);
         if (value != null) {
             return Integer.parseInt(value.trim());
         }
@@ -185,7 +243,7 @@ public class ConfigFile {
     }
 
     public Long getLong(String key, Long defaultValue) {
-        String value = properties.getProperty(key);
+        String value = get(key);
         if (value != null) {
             return Long.parseLong(value.trim());
         }
@@ -197,7 +255,7 @@ public class ConfigFile {
     }
 
     public Boolean getBoolean(String key, Boolean defaultValue) {
-        String value = properties.getProperty(key);
+        String value = get(key);
         if (value != null) {
             value = value.toLowerCase().trim();
             if ("true".equals(value)) {
@@ -211,6 +269,39 @@ public class ConfigFile {
     }
 
     public boolean containsKey(String key) {
+        if (isYml){
+            if (null!=properties.get(key)){
+                return true;
+            }else {
+                Object ret=null;
+                String[] strs=key.split("\\.");
+                Object temp=null;
+                String str;
+                for (int i = 0; i < strs.length; i++) {
+                    str = strs[i];
+                    if (str.length()<1) {
+                        continue;
+                    }
+                    if (i==0){
+                        temp = properties.get(str);
+                    }else if (i==strs.length-1){
+                        if (temp instanceof Map){
+                            if (null!=((Map) temp).get(str)) {
+                                ret = ((Map) temp).get(str);
+                            }
+                        }
+                    }else if (null!=temp){
+                        if (temp instanceof Map){
+                            if (null!=((Map) temp).get(str)) {
+                                temp = ((Map) temp).get(str);
+                            }
+                        }
+                    }
+                }
+                return null!=ret;
+            }
+
+        }
         return properties.containsKey(key);
     }
 

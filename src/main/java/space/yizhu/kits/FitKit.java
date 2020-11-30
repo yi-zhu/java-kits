@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import space.yizhu.record.core.Const;
 
 /**
- * PropKit. PropKit can load properties file from CLASSPATH or File object.
+ * FitKit. FitKit can load properties file from CLASSPATH or File object.
  */
 public class FitKit {
 
@@ -30,15 +30,15 @@ public class FitKit {
      * Using the properties file. It will loading the properties file if not loading.
      * <p>
      * Example:<br>
-     * PropKit.use("config.txt", "UTF-8");<br>
-     * PropKit.use("other_config.txt", "UTF-8");<br><br>
-     * String userName = PropKit.get("userName");<br>
-     * String password = PropKit.get("password");<br><br>
+     * FitKit.use("config.txt", "UTF-8");<br>
+     * FitKit.use("other_config.txt", "UTF-8");<br><br>
+     * String userName = FitKit.get("userName");<br>
+     * String password = FitKit.get("password");<br><br>
      *
-     * userName = PropKit.use("other_config.txt").get("userName");<br>
-     * password = PropKit.use("other_config.txt").get("password");<br><br>
+     * userName = FitKit.use("other_config.txt").get("userName");<br>
+     * password = FitKit.use("other_config.txt").get("password");<br><br>
      *
-     * PropKit.use("com/jfinal/config_in_sub_directory_of_classpath.txt");
+     * FitKit.use("config_in_sub_directory_of_classpath.txt");
      *
      * @param fileName the properties file's name in classpath or the sub directory of classpath
      * @param encoding the encoding
@@ -72,8 +72,8 @@ public class FitKit {
      * Using the properties file bye File object. It will loading the properties file if not loading.
      * <p>
      * Example:<br>
-     * PropKit.use(new File("/var/config/my_config.txt"), "UTF-8");<br>
-     * Strig userName = PropKit.use("my_config.txt").get("userName");
+     * FitKit.use(new File("/var/config/my_config.txt"), "UTF-8");<br>
+     * Strig userName = FitKit.use("my_config.txt").get("userName");
      *
      * @param file the properties File object
      * @param encoding the encoding
@@ -160,7 +160,7 @@ public class FitKit {
 
     public static ConfigFile getConfigFile() {
         if (configFile == null) {
-            throw new IllegalStateException("Load propties file by invoking PropKit.use(String fileName) method first.");
+            throw new IllegalStateException("Load propties file by invoking FitKit.use(String fileName) method first.");
         }
         return configFile;
     }
@@ -171,6 +171,9 @@ public class FitKit {
 
     public static String get(String key) {
         return getConfigFile().get(key);
+    }
+    public static Object getObj(String key) {
+        return getConfigFile().getObj(key);
     }
 
     public static String get(String key, String defaultValue) {
@@ -203,6 +206,12 @@ public class FitKit {
 
     public static boolean containsKey(String key) {
         return getConfigFile().containsKey(key);
+    }
+
+
+    public static void main(String[] args) {
+        FitKit.use("app.yml").getInt("server.port");
+        FitKit.getObj("test.port");
     }
 }
 

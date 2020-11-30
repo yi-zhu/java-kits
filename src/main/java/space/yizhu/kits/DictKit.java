@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
-//字典你敢信??
+//字典你敢信
 public class DictKit {
     private static final SensitiveStringDecoder[] AVAIL_ENCODINGS = {new SensitiveStringDecoder(Charset.forName("UTF-8")),
             new SensitiveStringDecoder(Charset.forName("UTF-16LE")), new SensitiveStringDecoder(Charset.forName("UTF-16BE")),

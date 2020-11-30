@@ -7,9 +7,9 @@ import space.yizhu.record.render.ViewType;
 
 public interface Const {
 
-    String JFINAL_VERSION = "3.6";
+    String JFDb_VERSION = "3.6";
 
-    ViewType DEFAULT_VIEW_TYPE = ViewType.JFINAL_TEMPLATE;
+    ViewType DEFAULT_VIEW_TYPE = ViewType.JFDb_TEMPLATE;
 
     String DEFAULT_BASE_UPLOAD_PATH = "upload";
 
@@ -29,7 +29,7 @@ public interface Const {
 
     int DEFAULT_FREEMARKER_TEMPLATE_UPDATE_DELAY = 3600;    
 
-    String DEFAULT_TOKEN_NAME = "_jfinal_token";
+    String DEFAULT_TOKEN_NAME = "_JFDb_token";
 
     int DEFAULT_SECONDS_OF_TOKEN_TIME_OUT = 900;            
 

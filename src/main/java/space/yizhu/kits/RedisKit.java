@@ -561,7 +561,6 @@ public class RedisKit {
             //将byte数组的对象进行转换为byte的数组
             return baos.toByteArray();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
              SysKit.print(e);
         }
 
