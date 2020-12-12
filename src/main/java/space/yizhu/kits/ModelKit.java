@@ -18,9 +18,9 @@ package space.yizhu.kits;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import space.yizhu.bean.BaseModel;
 import space.yizhu.record.plugin.activerecord.Model;
 import space.yizhu.record.plugin.activerecord.Record;
-import space.yizhu.bean.BaseModel;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -157,13 +157,16 @@ public class ModelKit {
 
 
     public static List<Map<String, Object>> toMaps(List<? extends BaseModel> models) {
+        return toMaps(models, false);
+    }
+    public static List<Map<String, Object>> toMaps(List<? extends BaseModel> models ,boolean  changeToHump) {
         if (models == null)
             return null;
         else {
             List<Map<String, Object>> maps = new ArrayList<>();
             for (BaseModel model : models) {
 
-                maps.add(toMap(model));
+                maps.add(toMap(model,changeToHump));
             }
 
             return maps;
@@ -186,7 +189,6 @@ public class ModelKit {
             return jsonArray;
         }
     }
-
 
 
     public static JsonArray toTrees(List<? extends BaseModel> listMap) {
@@ -265,16 +267,51 @@ public class ModelKit {
     }
 
     public static Map<String, Object> toMap(Model model) {
+        return toMap(model, false);
+    }
+
+    public static Map<String, Object> toMap(Model model, boolean changeToHump) {
         Map<String, Object> map = new HashMap<>();
         Set<Entry<String, Object>> attrs = model._getAttrsEntrySet();
         for (Entry<String, Object> entry : attrs) {
             try {
-                map.put(entry.getKey(), entry.getValue());
+                if (null != entry.getValue())
+                    if (changeToHump) {
+                        map.put(changeToHump(entry.getKey()), entry.getValue());
+                    } else
+                        map.put(entry.getKey(), entry.getValue());
+
             } catch (Exception e) {
                 map.put(entry.getKey(), "");
             }
         }
         return map;
+    }
+
+    /**
+     * 驼峰式命名
+     * @param str xx_yy
+     * @return xxYy
+     */
+    public static String changeToHump(String str) {
+        if (null == str)
+            return null;
+        if (str.contains("_")){
+            String[] strs = str.split("_");
+            for (int i = 0; i < strs.length; i++) {
+                if (i == 0) {
+                    str = strs[i];
+                } else {
+                    char[] cs = strs[i].toCharArray();
+                    cs[0] -= 32;
+                    str += String.valueOf(cs);
+                    ;
+
+                }
+            }
+        }
+
+        return str;
     }
 
     public static BaseModel<?> toModel1(BaseModel<?> model, Map<String, String[]> mapData) {
@@ -290,7 +327,7 @@ public class ModelKit {
                 }
         }
         try {
-            model.set("update_date", new Date().toLocaleString());
+            model.set("modify_time", new Date());
         } catch (Exception e) {
             System.out.println("没有更新时间");
         }
@@ -311,7 +348,7 @@ public class ModelKit {
                 }
         }
         try {
-            model.set("update_date", new Date().toLocaleString());
+            model.set("modify_time", new Date());
         } catch (Exception e) {
             System.out.println("没有更新时间");
         }
@@ -344,7 +381,7 @@ public class ModelKit {
                 }
             });
         } catch (Exception e) {
-             SysKit.print(e);
+            SysKit.print(e);
         }
     }
 

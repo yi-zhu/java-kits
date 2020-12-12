@@ -39,15 +39,15 @@ public class ActiveRecordPlugin implements IPlugin {
     }
 
     public ActiveRecordPlugin(DataSource dataSource) {
-        this(DbKit.MAIN_CONFIG_NAME, dataSource);
+        this(DbConfig.MAIN_CONFIG_NAME, dataSource);
     }
 
     public ActiveRecordPlugin(String configName, DataSource dataSource) {
-        this(configName, dataSource, DbKit.DEFAULT_TRANSACTION_LEVEL);
+        this(configName, dataSource, DbConfig.DEFAULT_TRANSACTION_LEVEL);
     }
 
     public ActiveRecordPlugin(DataSource dataSource, int transactionLevel) {
-        this(DbKit.MAIN_CONFIG_NAME, dataSource, transactionLevel);
+        this(DbConfig.MAIN_CONFIG_NAME, dataSource, transactionLevel);
     }
 
     public ActiveRecordPlugin(String configName, IDataSourceProvider dataSourceProvider, int transactionLevel) {
@@ -62,15 +62,15 @@ public class ActiveRecordPlugin implements IPlugin {
     }
 
     public ActiveRecordPlugin(IDataSourceProvider dataSourceProvider) {
-        this(DbKit.MAIN_CONFIG_NAME, dataSourceProvider);
+        this(DbConfig.MAIN_CONFIG_NAME, dataSourceProvider);
     }
 
     public ActiveRecordPlugin(String configName, IDataSourceProvider dataSourceProvider) {
-        this(configName, dataSourceProvider, DbKit.DEFAULT_TRANSACTION_LEVEL);
+        this(configName, dataSourceProvider, DbConfig.DEFAULT_TRANSACTION_LEVEL);
     }
 
     public ActiveRecordPlugin(IDataSourceProvider dataSourceProvider, int transactionLevel) {
-        this(DbKit.MAIN_CONFIG_NAME, dataSourceProvider, transactionLevel);
+        this(DbConfig.MAIN_CONFIG_NAME, dataSourceProvider, transactionLevel);
     }
 
     public ActiveRecordPlugin(Config config) {
@@ -193,13 +193,13 @@ public class ActiveRecordPlugin implements IPlugin {
         config.sqlKit.parseSqlTemplate();
 
         new TableBuilder().build(tableList, config);
-        DbKit.addConfig(config);
+        DbConfig.addConfig(config);
         isStarted = true;
         return true;
     }
 
     public boolean stop() {
-        DbKit.removeConfig(config.getName());
+        DbConfig.removeConfig(config.getName());
         isStarted = false;
         return true;
     }
@@ -220,7 +220,7 @@ public class ActiveRecordPlugin implements IPlugin {
         arp.setContainerFactory(containerFactory);
         arp.setCache(cache);
         arp.start();
-        DbKit.brokenConfig = arp.config;
+        DbConfig.brokenConfig = arp.config;
     }
 
     

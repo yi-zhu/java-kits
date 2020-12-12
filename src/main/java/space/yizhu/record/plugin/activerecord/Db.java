@@ -18,7 +18,7 @@ public class Db {
 
     
     static void init(String configName) {
-        MAIN = DbKit.getConfig(configName).dbProFactory.getDbPro(configName); 
+        MAIN = DbConfig.getConfig(configName).dbProFactory.getDbPro(configName);
         map.put(configName, MAIN);
     }
 
@@ -33,7 +33,7 @@ public class Db {
     public static DbPro use(String configName) {
         DbPro result = map.get(configName);
         if (result == null) {
-            Config config = DbKit.getConfig(configName);
+            Config config = DbConfig.getConfig(configName);
             if (config == null) {
                 throw new IllegalArgumentException("Config not found by configName: " + configName);
             }

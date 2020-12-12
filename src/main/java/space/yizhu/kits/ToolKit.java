@@ -2,7 +2,7 @@ package space.yizhu.kits;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import space.yizhu.bean.Test;
+import space.yizhu.bean.LogModel;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -10,6 +10,7 @@ import java.lang.reflect.Modifier;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -147,10 +148,12 @@ public class ToolKit {
     /*生成随机数字*/
     public static int getRandomInt(int max, int min) {
         Random random = new Random();
+        if (max-min<2)
+            return max;
         if (max > min)
             return random.nextInt(max) % (max - min + 1) + min;
         else
-            return random.nextInt(min) % (min - max + 1) + max;
+            return random.nextInt(min+1) % (min - max + 1) + max;
 
     }    /*生成随机数字*/
 
@@ -166,6 +169,7 @@ public class ToolKit {
             return (random.nextInt(minI) % (minI - maxI + 1) + maxI) / 100.0;
 
     }
+
 
     /*生成随机小数*/
     public static double getRandomDouble() {
@@ -401,6 +405,26 @@ public class ToolKit {
         return json;
     }
 
+    public static String listToJson(List list) {
+        String json = "";
+        try {
+            json= JSONUtils.toJSONString(list);
+        } catch (Exception e) {
+            System.out.println("listToJson:" + e.getLocalizedMessage());
+        }
+        return json;
+    }
+
+    public static String toJson(Object obj) {
+        String json = "";
+        try {
+            json= JSONUtils.toJSONString(obj);
+        } catch (Exception e) {
+            System.out.println("listToJson:" + e.getLocalizedMessage());
+        }
+        return json;
+    }
+
 
     //一维数组转化为二维数组
     public static Object[][] to2Array(Object[] oneArry) {
@@ -411,7 +435,7 @@ public class ToolKit {
 
 
     public static Object mapToBean(Map map, Class<?> beanClass) throws Exception {
-        if (map == null)
+        if (map == null||map.size()==0)
             return null;
 
         Object obj = beanClass.newInstance();
@@ -423,7 +447,38 @@ public class ToolKit {
             }
 
             field.setAccessible(true);
-            field.set(obj, map.get(field.getName()));
+            Object val = map.get(field.getName());
+            if (null!=val){
+                if (null!=field.get(obj)){
+                    if (field.getType() == String.class) {
+                        field.set(obj, String.valueOf(map.get(field.getName())));
+                    }else if (field.get(obj) instanceof Number) {
+                        if (field.get(obj) instanceof Integer)
+                            field.set(obj, Integer.valueOf(String.valueOf(map.get(field.getName()))));
+                        else if (field.get(obj) instanceof Double)
+                            field.set(obj, Double.valueOf(String.valueOf(map.get(field.getName()))));
+                        else if (field.get(obj) instanceof Float)
+                            field.set(obj, Float.valueOf(String.valueOf(map.get(field.getName()))));
+                        else if (field.get(obj) instanceof Long)
+                            field.set(obj, Long.valueOf(String.valueOf(map.get(field.getName()))));
+                        else if (field.get(obj) instanceof Short)
+                            field.set(obj, Short.valueOf(String.valueOf(map.get(field.getName()))));
+                        else if (field.get(obj) instanceof Byte)
+                            field.set(obj, Byte.valueOf(String.valueOf(map.get(field.getName()))));
+                    } else {
+
+                        field.set(obj, map.get(field.getName()));
+
+                    }
+                }else {
+                    if (field.getType() == String.class) {
+                        field.set(obj, String.valueOf(map.get(field.getName())));
+                    }else
+                        field.set(obj, map.get(field.getName()));
+
+                }
+
+            }
         }
 
         return obj;
@@ -446,6 +501,7 @@ public class ToolKit {
         return map;
 
     }
+
 
 
 }

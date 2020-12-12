@@ -3,13 +3,15 @@
 package space.yizhu.record.plugin.activerecord;
 
 import com.google.gson.Gson;
+import space.yizhu.bean.LogModel;
+import space.yizhu.kits.*;
 import space.yizhu.record.plugin.activerecord.cache.ICache;
-import space.yizhu.kits.DateKit;
-import space.yizhu.kits.SysKit;
+import sun.util.locale.LocaleMatcher;
 
 import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.Map.Entry;
 
 
@@ -29,8 +31,9 @@ public abstract class Model<M extends Model> implements Serializable {
 
     private Map<String, Object> createAttrsMap() {
         Config config = _getConfig();
-        if (config == null)
-            return DbKit.brokenConfig.containerFactory.getAttrsMap();
+        if (config == null) {
+            return DbConfig.brokenConfig.containerFactory.getAttrsMap();
+        }
         return config.containerFactory.getAttrsMap();
     }
 
@@ -75,8 +78,9 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public M _setAttrs(Map<String, Object> attrs) {
-        for (Entry<String, Object> e : attrs.entrySet())
+        for (Entry<String, Object> e : attrs.entrySet()) {
             set(e.getKey(), e.getValue());
+        }
         return (M) this;
     }
 	
@@ -85,18 +89,20 @@ public abstract class Model<M extends Model> implements Serializable {
     protected Set<String> _getModifyFlag() {
         if (modifyFlag == null) {
             Config config = _getConfig();
-            if (config == null)
-                modifyFlag = DbKit.brokenConfig.containerFactory.getModifyFlagSet();
-            else
+            if (config == null) {
+                modifyFlag = DbConfig.brokenConfig.containerFactory.getModifyFlagSet();
+            } else {
                 modifyFlag = config.containerFactory.getModifyFlagSet();
+            }
         }
         return modifyFlag;
     }
 
     protected Config _getConfig() {
-        if (configName != null)
-            return DbKit.getConfig(configName);
-        return DbKit.getConfig(_getUsefulClass());
+        if (configName != null) {
+            return DbConfig.getConfig(configName);
+        }
+        return DbConfig.getConfig(_getUsefulClass());
     }
 	
 	
@@ -200,23 +206,46 @@ public abstract class Model<M extends Model> implements Serializable {
         return (T) (result != null ? result : defaultValue);
     }
 
-    
+
+
     public String getStr(String attr) {
         
         Object s = attrs.get(attr);
-        return s != null ? s.toString() : null;
+        if (null == s) {
+            s = attrs.get(attr.toLowerCase());
+            if (null == s) {
+                return "";
+            } else {
+                return s.toString();
+            }
+        } else {
+            return s.toString();
+        }
     }
 
     
     public Integer getInt(String attr) {
-        Number n = (Number) attrs.get(attr);
-        return n != null ? n.intValue() : null;
+        Object n =attrs.get(attr);
+        if (n instanceof Number) {
+            return n != null ? ((Number)n).intValue() : -1;
+        } else if(n instanceof String) {
+            return n != null ? Integer.parseInt(n.toString()) : -1;
+        } else {
+            return -1;
+        }
     }
 
     
     public Long getLong(String attr) {
-        Number n = (Number) attrs.get(attr);
-        return n != null ? n.longValue() : null;
+        Object n =attrs.get(attr);
+        if (n instanceof Number) {
+            return n != null ? ((Number)n).longValue() : -1;
+        } else if(n instanceof String) {
+            return n != null ? Long.parseLong(n.toString()) : -1;
+        } else {
+            return -1L;
+        }
+
     }
 
     
@@ -226,7 +255,16 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public java.util.Date getDate(String attr) {
-        return (java.util.Date) attrs.get(attr);
+       Object obj=attrs.get(attr);
+       if (obj instanceof  Date){
+           return (Date) obj;
+       }else if ( obj instanceof  String){
+           return DateKit.parseDate(((String) obj));
+       }else if ( obj instanceof  Number){
+           return new Date(((Number) obj).longValue());
+       }else {
+           return null;
+       }
     }
 
     
@@ -288,7 +326,7 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public Page<M> paginate(int pageNumber, int pageSize, String select, String sqlExceptSelect) {
-        return doPaginate(pageNumber, pageSize, null, select, sqlExceptSelect, DbKit.NULL_PARA_ARRAY);
+        return doPaginate(pageNumber, pageSize, null, select, sqlExceptSelect, DbConfig.NULL_PARA_ARRAY);
     }
 
     
@@ -375,33 +413,43 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public boolean save() {
+        StringBuilder sql = new StringBuilder();
+
         try {
             filter(FILTER_BY_SAVE);
 
             Config config = _getConfig();
             Table table = _getTable();
 
-            StringBuilder sql = new StringBuilder();
             List<Object> paras = new ArrayList<Object>();
             List<Object> parasT = new ArrayList<Object>();
             for (Object para : paras) {
-                if (para.toString().contains("-"))
-                    parasT.add((java.sql.Timestamp) para);
-                else
+                if (para.toString().contains("-")) {
+                    parasT.add((Timestamp) para);
+                } else {
                     parasT.add(para);
+                }
             }
 
             for (Entry<String, Object> set : attrs.entrySet()) {
-                if (set.getValue() != null)
-
+                if (set.getValue() != null) {
                     if (table.getColumnType(set.getKey()) == Long.class) {
                         set.setValue(Long.parseLong(String.valueOf(set.getValue())));
                     } else if (table.getColumnType(set.getKey()) == Integer.class) {
-                        if (!set.getValue().toString().equals(""))
+                        if (!set.getValue().toString().equals("")) {
                             set.setValue(Integer.parseInt(String.valueOf(set.getValue())));
+                        }
                     } else if (table.getColumnType(set.getKey()) == Timestamp.class) {
-                        set.setValue(DateKit.string2Timestamp(set.getValue().toString()));
+                        if (set.getValue() instanceof Date) {
+                            set.setValue(new Timestamp(((Date) set.getValue()).getTime()));
+                        } else if (set.getValue() instanceof String ){
+                            set.setValue(new Timestamp(DateKit.parseDate(set.getValue().toString()).getTime()));
+                        }
+                        else if (set.getValue() instanceof Number){
+                            set.setValue(new Timestamp((Long) set.getValue()));
+                        }
                     }
+                }
             }
             config.dialect.forModelSave(table, attrs, sql, parasT);
             
@@ -421,12 +469,24 @@ public abstract class Model<M extends Model> implements Serializable {
                 result = pst.executeUpdate();
                 config.dialect.getModelGeneratedKey(this, pst, table);
                 _getModifyFlag().clear();
-                return result >= 1;
             } catch (Exception e) {
                 throw new ActiveRecordException(e);
             } finally {
                 config.close(pst, conn);
             }
+            try {
+                if (DbKit.isSaveDblog()&&CharKit.isNotNull(DbKit.logTableName)){
+                    if (!table.getName().contains(DbKit.logTableName)){
+                        new LogModel().setHeads(sql.toString()).setReturned(result + "")
+                                .setParams(ToolKit.listToJson(paras))
+                                .setType(1).setCode(table.getName()).save();
+                    }
+                }
+            } catch (Exception e) {
+                SysKit.print(e,"日志记录-创建出问题了");
+            }
+            return result >= 1;
+
         } catch (ActiveRecordException e) {
             if (e.toString().contains("Key (id)=")) { 
                 SysKit.print("postgres自增主键异常.重新设定主键.如依旧报错,请手动修复");
@@ -445,32 +505,36 @@ public abstract class Model<M extends Model> implements Serializable {
         String[] pKeys = table.getPrimaryKey();
         if (pKeys.length == 1) {    
             Object id = attrs.get(pKeys[0]);
-            if (id == null)
+            if (id == null) {
                 throw new ActiveRecordException("Primary key " + pKeys[0] + " can not be null");
+            }
             return deleteById(table, id);
         }
 
         Object[] ids = new Object[pKeys.length];
         for (int i = 0; i < pKeys.length; i++) {
             ids[i] = attrs.get(pKeys[i]);
-            if (ids[i] == null)
+            if (ids[i] == null) {
                 throw new ActiveRecordException("Primary key " + pKeys[i] + " can not be null");
+            }
         }
         return deleteById(table, ids);
     }
 
     
     public boolean deleteById(Object idValue) {
-        if (idValue == null)
+        if (idValue == null) {
             throw new IllegalArgumentException("idValue can not be null");
+        }
         return deleteById(_getTable(), idValue);
     }
 
     
     public boolean deleteByIds(Object... idValues) {
         Table table = _getTable();
-        if (idValues == null || idValues.length != table.getPrimaryKey().length)
+        if (idValues == null || idValues.length != table.getPrimaryKey().length) {
             throw new IllegalArgumentException("Primary key nubmer must equals id value number and can not be null");
+        }
 
         return deleteById(table, idValues);
     }
@@ -478,15 +542,30 @@ public abstract class Model<M extends Model> implements Serializable {
     private boolean deleteById(Table table, Object... idValues) {
         Config config = _getConfig();
         Connection conn = null;
+        String sql;
+        int result = 0;
         try {
             conn = config.getConnection();
-            String sql = config.dialect.forModelDeleteById(table);
-            return Db.update(config, conn, sql, idValues) >= 1;
+             sql = config.dialect.forModelDeleteById(table);
+            result= Db.update(config, conn, sql, idValues) ;
         } catch (Exception e) {
             throw new ActiveRecordException(e);
         } finally {
             config.close(conn);
         }
+        try {
+            if (DbKit.isSaveDblog()&&CharKit.isNotNull(DbKit.logTableName)){
+                if (!table.getName().contains(DbKit.logTableName)){
+                    new LogModel().setHeads(String.valueOf(sql)).setReturned(result + "")
+                            .setParams(ToolKit.listToJson(Arrays.asList(idValues))).setType(3)
+                            .setCode(table.getName())
+                            .save();
+                }
+            }
+        } catch (Exception e) {
+            SysKit.print(e,"日志记录-更新出问题了");
+        }
+        return result >= 1;
     }
 
     
@@ -503,18 +582,23 @@ public abstract class Model<M extends Model> implements Serializable {
             String[] pKeys = table.getPrimaryKey();
             for (String pKey : pKeys) {
                 Object id = attrs.get(pKey);
-                if (id == null)
-                    throw new ActiveRecordException("You can't update model without Primary Key, " + pKey + " can not be null.");
+                if (id == null) {
+                    throw new ActiveRecordException( pKey + " 主键不能为空.");
+                }
             }
             for (Entry<String, Object> set : attrs.entrySet()) {
-                if (set.getValue() != null)
+                if (set.getValue() != null) {
                     if (table.getColumnType(set.getKey()) == Long.class) {
                         set.setValue(Long.parseLong(String.valueOf(set.getValue())));
                     } else if (table.getColumnType(set.getKey()) == Integer.class) {
                         set.setValue(Integer.parseInt(String.valueOf(set.getValue())));
                     } else if (table.getColumnType(set.getKey()) == Timestamp.class) {
+                        if (set.getKey().equals("modify_time")){
+                            set.setValue(new Timestamp(Calendar.getInstance().getTime().getTime()));
+                        }else
                         set.setValue(DateKit.string2Timestamp(set.getValue().toString()));
                     }
+                }
             }
             Config config = _getConfig();
             StringBuilder sql = new StringBuilder();
@@ -527,19 +611,34 @@ public abstract class Model<M extends Model> implements Serializable {
 
             
             Connection conn = null;
+            int result=0;
             try {
                 conn = config.getConnection();
-                int result = Db.update(config, conn, sql.toString(), paras.toArray());
-                if (result >= 1) {
-                    _getModifyFlag().clear();
-                    return true;
-                }
-                return false;
+                 result = Db.update(config, conn, sql.toString(), paras.toArray());
+
             } catch (Exception e) {
                 throw new ActiveRecordException(e);
             } finally {
                 config.close(conn);
             }
+
+            try {
+                if (DbKit.isSaveDblog()&&CharKit.isNotNull(DbKit.logTableName)){
+                    if (!table.getName().contains(DbKit.logTableName)){
+                        new LogModel().setHeads(sql.toString()).setReturned(result + "")
+                                .setParams(ToolKit.listToJson(paras)).setType(2)
+                                .setCode(table.getName())
+                                .save();
+                    }
+                }
+            } catch (Exception e) {
+                SysKit.print(e,"日志记录-更新出问题了");
+            }
+            if (result >= 1) {
+                _getModifyFlag().clear();
+                return true;
+            }
+            return false;
         } catch (ActiveRecordException e) {
             if (e.toString().contains("Key (id)=")) { 
                 find("select setval('" + _getTable().getName() + "_id_seq', max(id)) from " + _getTable().getName());
@@ -556,7 +655,7 @@ public abstract class Model<M extends Model> implements Serializable {
         config.dialect.fillStatement(pst, paras);
         ResultSet rs = pst.executeQuery();
         List<M> result = config.dialect.buildModelList(rs, _getUsefulClass());    
-        DbKit.close(rs, pst);
+        DbConfig.close(rs, pst);
         return result;
     }
 
@@ -579,13 +678,13 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public List<M> find(String sql) {
-        return find(sql, DbKit.NULL_PARA_ARRAY);
+        return find(sql, DbConfig.NULL_PARA_ARRAY);
     }
 
     public List<M> findAll() {
         Config config = _getConfig();
         String sql = config.dialect.forFindAll(_getTable().getName());
-        return find(config, sql, DbKit.NULL_PARA_ARRAY);
+        return find(config, sql, DbConfig.NULL_PARA_ARRAY);
     }
 
     
@@ -596,7 +695,7 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public M findFirst(String sql) {
-        return findFirst(sql, DbKit.NULL_PARA_ARRAY);
+        return findFirst(sql, DbConfig.NULL_PARA_ARRAY);
     }
 
     
@@ -617,8 +716,9 @@ public abstract class Model<M extends Model> implements Serializable {
     
     public M findByIdLoadColumns(Object[] idValues, String columns) {
         Table table = _getTable();
-        if (table.getPrimaryKey().length != idValues.length)
+        if (table.getPrimaryKey().length != idValues.length) {
             throw new IllegalArgumentException("id values error, need " + table.getPrimaryKey().length + " id value");
+        }
 
         Config config = _getConfig();
         String sql = config.dialect.forModelFindById(table, columns);
@@ -635,11 +735,12 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public M remove(String... attrs) {
-        if (attrs != null)
+        if (attrs != null) {
             for (String a : attrs) {
                 this.attrs.remove(a);
                 this._getModifyFlag().remove(a);
             }
+        }
         return (M) this;
     }
 
@@ -660,15 +761,17 @@ public abstract class Model<M extends Model> implements Serializable {
         if (attrs != null && attrs.length > 0) {
             Config config = _getConfig();
             if (config == null) {    
-                config = DbKit.brokenConfig;
+                config = DbConfig.brokenConfig;
             }
             Map<String, Object> newAttrs = config.containerFactory.getAttrsMap();    
             Set<String> newModifyFlag = config.containerFactory.getModifyFlagSet();    
             for (String a : attrs) {
-                if (this.attrs.containsKey(a))    
+                if (this.attrs.containsKey(a)) {
                     newAttrs.put(a, this.attrs.get(a));
-                if (this._getModifyFlag().contains(a))
+                }
+                if (this._getModifyFlag().contains(a)) {
                     newModifyFlag.add(a);
+                }
             }
             this.attrs = newAttrs;
             this.modifyFlag = newModifyFlag;
@@ -687,8 +790,9 @@ public abstract class Model<M extends Model> implements Serializable {
             attrs.clear();
             _getModifyFlag().clear();
             attrs.put(attr, keepIt);
-            if (keepFlag)
+            if (keepFlag) {
                 _getModifyFlag().add(attr);
+            }
         } else {
             attrs.clear();
             _getModifyFlag().clear();
@@ -703,6 +807,7 @@ public abstract class Model<M extends Model> implements Serializable {
         return (M) this;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append('{');
@@ -723,19 +828,22 @@ public abstract class Model<M extends Model> implements Serializable {
         return sb.toString();
     }
 
-    
+    @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Model))
+        if (!(o instanceof Model)) {
             return false;
-        if (o == this)
+        }
+        if (o == this) {
             return true;
+        }
         Model mo = (Model) o;
-        if (getClass() != mo.getClass())
+        if (getClass() != mo.getClass()) {
             return false;
+        }
         return attrs.equals(mo.attrs);
     }
 
-    
+    @Override
     public int hashCode() {
         
         return attrs.hashCode();
@@ -755,7 +863,7 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public List<M> findByCache(String cacheName, Object key, String sql) {
-        return findByCache(cacheName, key, sql, DbKit.NULL_PARA_ARRAY);
+        return findByCache(cacheName, key, sql, DbConfig.NULL_PARA_ARRAY);
     }
 
     
@@ -771,7 +879,7 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public M findFirstByCache(String cacheName, Object key, String sql) {
-        return findFirstByCache(cacheName, key, sql, DbKit.NULL_PARA_ARRAY);
+        return findFirstByCache(cacheName, key, sql, DbConfig.NULL_PARA_ARRAY);
     }
 
     
@@ -781,7 +889,7 @@ public abstract class Model<M extends Model> implements Serializable {
 
     
     public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, String select, String sqlExceptSelect) {
-        return doPaginateByCache(cacheName, key, pageNumber, pageSize, null, select, sqlExceptSelect, DbKit.NULL_PARA_ARRAY);
+        return doPaginateByCache(cacheName, key, pageNumber, pageSize, null, select, sqlExceptSelect, DbConfig.NULL_PARA_ARRAY);
     }
 
     public Page<M> paginateByCache(String cacheName, Object key, int pageNumber, int pageSize, boolean isGroupBySql, String select, String sqlExceptSelect, Object... paras) {
@@ -833,6 +941,682 @@ public abstract class Model<M extends Model> implements Serializable {
         String[] sqls = PageSqlKit.parsePageSql(sqlPara.getSql());
         return doPaginate(pageNumber, pageSize, null, sqls[0], sqls[1], sqlPara.getPara());
     }
+
+
+
+
+    private int pageSize = 30;
+    private  final String SPACE=" ";
+
+
+
+    public String[] getField() {
+        return getFields().toArray(new String[]{});
+    }
+
+    public List<String> getFields() {
+        return new ArrayList<String>(this.getTable().getColumnTypeMap().keySet());
+    }
+
+
+    /**
+     * Getter for property 'pageSize'.
+     *
+     * @return Value for property 'pageSize'.
+     */
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    /**
+     * Setter for property 'pageSize'.
+     *
+     * @param pageSize Value to set for property 'pageSize'.
+     */
+    public Model<M> setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+        return this;
+    }
+
+    public List<M> findBy(Map<String, String> map) {
+        String keys = "", values = "";
+        for (Map.Entry<String, String> set : map.entrySet()) {
+            if (!set.getValue().equals("undefined")) {
+                keys += set.getKey() + ",";
+                values += set.getValue() + ",";
+            }
+
+        }
+        if (keys.endsWith(",")) {
+            keys = keys.substring(0, keys.length() - 1);
+            values = values.substring(0, values.length() - 1);
+            return findBy(keys, values);
+
+        } else {
+            return null;
+        }
+
+
+    }
+
+    //仿写于byId
+    public List<M> findBy(String key, String value) {
+        Table table = this.getTable();
+        String[] keys, values;
+        if (key == null || value == null) {
+            return null;
+        }
+        values = value.split(",");
+        keys = key.split(",");
+        int page = 1, limit = 1000;
+        StringBuilder sql = new StringBuilder("select * from " + table.getName() + " where ");
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i].equals("page")) {
+                page = Integer.parseInt(values[i]);
+            } else if (keys[i].equals("limit")) {
+                limit = Integer.parseInt(values[i]);
+            } else if (i < keys.length - 1 && table.getColumnTypeMap().containsKey(keys[i])) {
+                sql.append(keys[i]).append(" = '").append(values[i]).append("' and ");
+            } else if (table.getColumnTypeMap().containsKey(keys[i])) {
+                sql.append(keys[i]).append(" = '").append(values[i]).append("' ");
+            }
+        }
+        if (sql.toString().endsWith("and ")) {
+            sql.delete(sql.length() - 4, sql.length());
+        }
+        String order = "order by id desc";
+        sql.append(order);
+//        page--;
+//        sql.append(" LIMIT ").append(limit).append(" OFFSET ").append(page * limit);
+
+        List<M> result = null;
+        try {
+            result = this.find(sql.toString());
+        } catch (Exception e) {
+            result = this.find(sql.toString().replace(order, ""));
+        }
+        return result.size() > 0 ? result : null;
+    }
+
+    public M findByFirst(String key, String value) {
+
+        List<M> result = findBy(key, value);
+        if (result != null && result.size() > 0) {
+            return result.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    //仿写于byId
+    public List<M> findValue(String value, int limit, int page) {
+        Table table = this.getTable();
+        List<String> keys = new ArrayList<>(table.getColumnTypeMap().keySet());
+        StringBuilder sql = new StringBuilder("select * from " + table.getName() + " where ");
+        for (int i = 0; i < keys.size(); i++) {
+            if (i < keys.size() - 1) {
+                sql.append(keys.get(i)).append(" = '").append(value).append("' and ");
+            } else {
+                sql.append(keys.get(i)).append(" = '").append(value).append("' ");
+            }
+        }
+        String order = "order by id desc";
+        sql.append(order);
+        List<M> result = null;
+        try {
+            result = this.find(sql.toString());
+        } catch (Exception e) {
+            result = this.find(sql.toString().replace(order, ""));
+        }
+        return result.size() > 0 ? result : null;
+    }
+
+    //仿写于byId
+    public List<M> findOneKey(String key, String... values) {
+        Table table = this.getTable();
+
+        //language=SQL
+        String sql = "select * from " + table.getName() + " where " + key + " in (";
+        for (Object str : values) {
+            sql += "'" + str + "',";
+        }
+        sql = sql.substring(0, sql.length() - 1);
+        sql += ")";
+        List<M> result = new ArrayList<>();
+        try {
+            result = this.find(sql);
+        } catch (Exception e) {
+        }
+        return result.size() > 0 ? result : null;
+    }
+
+    public Page<M> find() {
+        return findByKeys(null, null, 1, pageSize);
+    }
+
+    /**
+     * 按id正序查询
+     *
+     * @param pageNum 第几页
+     * @return page
+     */
+    public Page<M> find(int pageNum) {
+        return findByKeys(null, null, pageNum, pageSize);
+    }
+
+    /**
+     * 按id正序查询
+     *
+     * @param pageNum  第几页
+     * @param pageSize 每页行数
+     * @return page
+     */
+    public Page<M> find(int pageNum, int pageSize) {
+        setPageSize(pageSize);
+        return findByKeys(null, null, pageNum, pageSize);
+    }
+
+    /**
+     * 按id正序查询
+     *
+     * @param key   查询关键字
+     * @param value 值
+     * @return 分页数据
+     */
+    public Page<M> find(String key, Object value) {
+        return findByKeys(new HashMap<String, Object>() {{
+            put(key, value);
+        }}, null, 1, pageSize);
+    }
+
+    /**
+     * 按id正序查询
+     *
+     * @param key      查询关键字
+     * @param value    值
+     * @param pageNum  第几页
+     * @param pageSize 每页行数
+     * @return 分页数据
+     */
+    public Page<M> find(String key, Object value, int pageNum, int pageSize) {
+        return findByKeys(new HashMap<String, Object>() {{
+            put(key, value);
+        }}, null, pageNum, pageSize);
+    }
+
+    /**
+     * 按id倒序查询
+     *
+     * @param key   查询关键字
+     * @param value 值
+     * @return 分页数据
+     */
+    public Page<M> findNews(String key, Object value) {
+        return findByKeys(new HashMap<String, Object>() {{
+                              put(key, value);
+                          }},
+                new HashMap<String, Boolean>() {{
+                    put("id", false);
+                }}, 1, pageSize);
+    }
+
+    /**
+     * 按id倒序查询
+     *
+     * @param key     查询关键字
+     * @param value   值
+     * @param pageNum 第几页
+     * @return 分页数据
+     */
+    public Page<M> findNews(String key, Object value, int pageNum) {
+        return findByKeys(new HashMap<String, Object>() {{
+                              put(key, value);
+                          }},
+                new HashMap<String, Boolean>() {{
+                    put("id", false);
+                }}, pageNum, pageSize);
+    }
+
+    /**
+     * 按id倒序查询
+     *
+     * @param key      查询关键字
+     * @param value    值
+     * @param pageNum  第几页
+     * @param pageSize 每页行数
+     * @return 分页数据
+     */
+    public Page<M> findNews(String key, Object value, int pageNum, int pageSize) {
+        return findByKeys(new HashMap<String, Object>() {{
+                              put(key, value);
+                          }},
+                new HashMap<String, Boolean>() {{
+                    put("id", false);
+                }}, pageNum, pageSize);
+    }
+
+
+    /**
+     * @param kv       查询条件
+     * @param orderBys 排序条件，true为asc，false为desc
+     * @param pageNum  起始页
+     * @param pageSize 要查询数据
+     * @return 分页数据
+     */
+    public Page<M> findByKeys(Map<String, Object> kv, Map<String, Boolean> orderBys, int pageNum, int pageSize) {
+        Table table = this.getTable();
+        //language=SQL
+        String sql = " from " + table.getName() + " ";
+        String orderStr = " order by ", whereStr = " where ";
+
+        if (null != kv) {
+            for (Map.Entry<String, Object> set : kv.entrySet()) {
+                if (null == set.getKey()) {
+                    continue;
+                }
+                //时间字段特殊处理
+                if (set.getKey().endsWith("_time") || set.getKey().endsWith("_date")) {
+                    if (set.getValue() instanceof List && ((List) set.getValue()).size() >= 2) {
+                        if (((List) set.getValue()).size() == 3) {
+                            whereStr += SPACE+set.getKey() + " not between  '" + ((List) set.getValue()).get(0) + "' and '" + ((List) set.getValue()).get(1) + "' and";
+                        } else {
+                            whereStr += SPACE+set.getKey() + " between  '" + ((List) set.getValue()).get(0) + "' and '" + ((List) set.getValue()).get(1) + "' and";
+                        }
+                    } else if (set.getValue() instanceof String && set.getValue().toString().contains(",")) {
+                        String[] vls = set.getValue().toString().split(",");
+                        if (vls.length == 2) {
+                            whereStr +=SPACE+ set.getKey() + " between  '" + vls[0] + "' and '" + vls[1] + "' and";
+                        } else if (vls.length == 3) {
+                            whereStr += SPACE+set.getKey() + " not between  '" + vls[0] + "' and '" + vls[1] + "' and";
+
+                        }
+                    }
+                } else if (set.getValue() instanceof List) {
+
+
+                    String tempIn;
+                    tempIn = SPACE + set.getKey() + " in (";
+
+                    for (Object obj : (List) set.getValue()) {
+                        tempIn += "'" + obj + "',";
+                    }
+                    if (tempIn.endsWith(",")) {
+                        tempIn = tempIn.substring(0, tempIn.length() - 1);
+                    }
+                    if (tempIn.endsWith("(")) {
+                        tempIn = null;
+                    } else {
+                        tempIn += ") and";
+                    }
+                    if (null != tempIn) {
+                        whereStr += tempIn;
+                    }
+                } else {
+
+                    whereStr += SPACE + set.getKey() + " = '" + set.getValue() + "' and";
+                }
+            }
+
+        } else {
+            whereStr = SPACE;
+        }
+
+        if (whereStr.endsWith("and")) {
+            whereStr = whereStr.substring(0, whereStr.length() - 3);
+        }
+        if (whereStr.length() > 10) {
+            sql += whereStr + SPACE;
+        }
+
+        if (null != orderBys) {
+            for (Map.Entry<String, Boolean> est : orderBys.entrySet()) {
+                if (est.getValue()) {
+                    orderStr += est.getKey() + " asc ,";
+                } else {
+                    orderStr += est.getKey() + " desc ,";
+                }
+            }
+        } else {
+            orderStr += " id asc  ";
+        }
+        if (orderStr.endsWith(",")) {
+            orderStr = CharKit.catTail(orderStr);
+        }
+        if (orderStr.length() > 13) {
+            sql += orderStr + SPACE;
+        }
+        return paginate(pageNum, pageSize, "select *", sql);
+
+
+    }
+
+    //仿写于byId
+    @Deprecated
+    public boolean delBy(String key, String... values) {
+        if (values.length == 0) {
+            return false;
+        }
+        Table table = this.getTable();
+        //language=SQL
+        String sql = "delete  from " + table.getName() + " where " + key;
+        if (values.length == 1) {
+            sql += " = '" + values[0] + "'";
+        } else {
+            StringBuilder inVl = new StringBuilder();
+            for (String v : values) {
+                inVl.append("'").append(v).append("',");
+            }
+            inVl = new StringBuilder(inVl.substring(0, inVl.length() - 1));
+            sql += "in (" + inVl + ")";
+        }
+
+        int result = 0;
+        try {
+            result = Db.update(sql);
+        } catch (Exception e) {
+            SysKit.print(e, "delby");
+        }
+        return result > -1;
+    }
+
+
+    //排序
+    public List<M> findBy(String key, String value, boolean isAsc, String orderKey) {
+        String[] keys, values;
+        Table table = this.getTable();
+        StringBuilder sql = new StringBuilder("select * from " + table.getName() + " ");
+        if (!(value == null || value.length() == 0)) {
+            sql.append(" where ");
+            keys = key.split(",");
+            values = value.split(",");
+            for (int i = 0; i < keys.length; i++) {
+                if (i == keys.length - 1) {
+                    sql.append(keys[i]).append(" = '").append(values[i]).append("' ");
+                } else {
+                    sql.append(keys[i]).append(" = '").append(values[i]).append("' and ");
+                }
+
+            }
+        }
+        if (orderKey != null) {
+            if (isAsc) {
+                sql.append("order by ").append(orderKey).append(" asc");
+            } else {
+                sql.append("order by ").append(orderKey).append(" desc");
+            }
+        }
+        List<M> result = this.find(sql.toString());
+        return result.size() > 0 ? result : null;
+    }
+
+
+    public boolean saveOrUpdate() {
+        try {
+            if (this._getAttrs().get("id") != null) {
+                this._getAttrs().put("id", Long.parseLong(String.valueOf(this._getAttrs().get("id"))));
+                return update();
+
+            } else {
+                return save();
+            }
+        } catch (Exception e) {
+            if (e.toString().contains("Key (id)=")) { //postsql 主键自增错误
+                SysKit.print("postgres自增主键异常.重新设定主键.如依旧报错,请手动修复");
+                find("select setval('" + this.getTableName() + "_id_seq', max(id)) from " + this.getTableName());
+                if (this._getAttrs().get("id") != null) {
+                    this._getAttrs().put("id", Long.parseLong(String.valueOf(this._getAttrs().get("id"))));
+                    return update();
+
+                } else {
+                    return save();
+                }
+            }
+            SysKit.print(e);
+            return false;
+        }
+    }
+
+
+    public M findFirstBy(String key, String value) {
+        try {
+            String[] keys, values;
+            Table table = this.getTable();
+            keys = key.split(",");
+            values = value.split(",");
+            String sql = "select * from " + table.getName() + " where ";
+            for (int i = 0; i < keys.length; i++) {
+                if (i == keys.length - 1) {
+                    sql += keys[i] + " = '" + values[i] + "' ";
+                } else {
+                    sql += keys[i] + " = '" + values[i] + "' and ";
+                }
+
+            }
+            List<M> result = this.find(sql);
+            return result.size() > 0 ? result.get(0) : null;
+        } catch (Exception e) {
+            SysKit.print(e);
+            return null;
+        }
+    }
+
+    public List<M> getAll() {
+        return getAllSort("id ");
+    }
+
+    public List<M> getAllSort(String sort) { //language=SQL
+        Table table = this.getTable();
+        List<M> result = this.find("select * from  " + table.getName() + " order by   " + sort + " ");
+        return result.size() > 0 ? result : null;
+    }
+
+
+    public Table getTable() {
+        return TableMapping.me().getTable(this.getUsefulClass());
+    }
+
+    private Class<? extends Model> getUsefulClass() {
+        Class c = this.getClass();
+        return !c.getName().contains("EnhancerByCGLIB") ? c : c.getSuperclass();
+    }
+
+    public String getTableName() {
+        return this.getTable().getName();
+    }
+
+
+    /* ------------标准表----------- */
+
+    private long id;
+    private String code;
+    private String name;
+    private String creator;
+    private String mender;
+    private boolean is_del;
+    private Date create_time;
+    private Date modify_time;
+    public long id() {
+        return getLong("id");
+    }
+
+    public String code() {
+        return getStr("code");
+    }
+
+    public String name() {
+        return getStr("name");
+    }
+
+    public String creator() {
+        return getStr("creator");
+    }
+
+    public String mender() {
+        return getStr("mender");
+    }
+
+    public Integer is_del() {
+        return getInt("is_del");
+    }
+
+    public String create_Time() {
+        return getStr("create_time");
+    }
+
+    public String modify_time() {
+        return getStr("modify_time");
+    }
+
+
+    public long getId() {
+        id = getLong("id");
+        return id;
+    }
+    /**
+     * Getter for property 'code'.
+     *
+     * @return Value for property 'code'.
+     */
+    public String getCode() {
+        return  code=getStr("code");
+    }
+
+    /**
+     * Setter for property 'code'.
+     *
+     * @param v Value to set for property 'code'.
+     */
+    public Model<M> setCode(String v) {
+        code = v;
+        set("code",v);
+        return this;
+    }
+
+
+    /**
+     * Getter for property 'name'.
+     *
+     * @return Value for property 'name'.
+     */
+    public String getName() {
+        return name= getStr("name");
+    }
+
+    /**
+     * Setter for property 'name'.
+     *
+     * @param v Value to set for property 'name'.
+     */
+    public Model<M> setName(String v) {
+        name = v;
+        set("name", v);
+        return this;
+    }
+
+    /**
+     * Getter for property 'creator'.
+     *
+     * @return Value for property 'creator'.
+     */
+    public String getCreator() {
+        return creator= getStr("creator");
+    }
+
+    /**
+     * Setter for property 'creator'.
+     *
+     * @param v Value to set for property 'creator'.
+     */
+    public Model<M> setCreator(String v) {
+        creator = v;
+        set("creator",v);
+        return this;
+    }
+
+    /**
+     * Getter for property 'mender'.
+     *
+     * @return Value for property 'mender'.
+     */
+    public String getMender()  {
+        return mender= get("mender");
+    }
+
+    /**
+     * Setter for property 'mender'.
+     *
+     * @param mender Value to set for property 'mender'.
+     */
+    public Model<M> setMender(String mender) {
+        this.mender = mender;
+        set("mender", mender);
+        return this;
+    }
+
+    /**
+     * Getter for property 'createTime'.
+     *
+     * @return Value for property 'createTime'.
+     */
+    public Date getCreateTime() {
+        return create_time= getDate("create_time");
+    }
+
+    /**
+     * Setter for property 'createTime'.
+     *
+     * @param createTime Value to set for property 'createTime'.
+     */
+    public Model<M> setCreateTime(Date createTime) {
+        this.create_time = createTime;
+        set("create_time", createTime);
+        return this;
+    }
+
+    /**
+     * Getter for property 'modifyTime'.
+     *
+     * @return Value for property 'modifyTime'.
+     */
+    public Date getModifyTime() {
+        return modify_time= get("modify_time");
+    }
+
+    /**
+     * Setter for property 'modifyTime'.
+     *
+     * @param modifyTime Value to set for property 'modifyTime'.
+     */
+    public Model<M> setModifyTime(Date modifyTime) {
+        modify_time = modifyTime;
+        set("modify_time",modifyTime);
+        return this;
+    }
+
+    /**
+     * Getter for property 'isDel'.
+     *
+     * @return Value for property 'isDel'.
+     */
+    public boolean getIsDel() {
+        return is_del=getStr("is_del").equals("1");
+    }
+
+    /**
+     * Setter for property 'isDel'.
+     *
+     * @param isDel Value to set for property 'isDel'.
+     * @return
+     */
+    public Model<M> setIsDel(boolean isDel) {
+        is_del = isDel;
+        set("is_del", isDel ? 1 : 0);
+        return this;
+    }
+
+
+
+
 }
 
 

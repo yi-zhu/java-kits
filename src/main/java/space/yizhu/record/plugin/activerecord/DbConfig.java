@@ -12,12 +12,12 @@ import java.util.Set;
 
 
 @SuppressWarnings("rawtypes")
-public final class DbKit {
+public final class DbConfig {
 
-    
+
     static Config config = null;
 
-    
+
     static Config brokenConfig = Config.createBrokenConfig();
 
     private static Map<Class<? extends Model>, Config> modelToConfig = new HashMap<Class<? extends Model>, Config>(512, 0.5F);
@@ -27,10 +27,10 @@ public final class DbKit {
     public static final String MAIN_CONFIG_NAME = "main";
     public static final int DEFAULT_TRANSACTION_LEVEL = Connection.TRANSACTION_REPEATABLE_READ;
 
-    private DbKit() {
+    private DbConfig() {
     }
 
-    
+
     public static void addConfig(Config config) {
         if (config == null) {
             throw new IllegalArgumentException("Config can not be null");
@@ -41,23 +41,23 @@ public final class DbKit {
 
         configNameToConfig.put(config.getName(), config);
 
-        
+
         if (MAIN_CONFIG_NAME.equals(config.getName())) {
-            DbKit.config = config;
-            Db.init(DbKit.config.getName());
+            DbConfig.config = config;
+            Db.init(DbConfig.config.getName());
         }
 
-        
-        if (DbKit.config == null) {
-            DbKit.config = config;
-            Db.init(DbKit.config.getName());
+
+        if (DbConfig.config == null) {
+            DbConfig.config = config;
+            Db.init(DbConfig.config.getName());
         }
     }
 
     public static Config removeConfig(String configName) {
-        if (DbKit.config != null && DbKit.config.getName().equals(configName)) {
-            
-            DbKit.config = null;
+        if (DbConfig.config != null && DbConfig.config.getName().equals(configName)) {
+
+            DbConfig.config = null;
         }
 
         Db.removeDbProWithConfig(configName);
@@ -113,8 +113,8 @@ public final class DbKit {
 
     @SuppressWarnings("unchecked")
     public static Class<? extends Model> getUsefulClass(Class<? extends Model> modelClass) {
-        
-        
+
+
         return (Class<? extends Model>) (modelClass.getName().indexOf("$$EnhancerBy") == -1 ? modelClass : modelClass.getSuperclass());
     }
 }

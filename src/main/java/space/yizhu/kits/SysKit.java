@@ -106,6 +106,11 @@ public class SysKit {
     }
 
     public static void print(String msg, String lab) {
+        if (lab==null||lab.length()==0){
+            print(msg);
+            return;
+        }
+
         lab = lab.toLowerCase();
         if (lab.contains("test")) {
             print(msg);

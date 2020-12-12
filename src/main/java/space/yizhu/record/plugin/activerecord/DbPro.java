@@ -19,7 +19,7 @@ import space.yizhu.record.plugin.activerecord.cache.ICache;
 import org.postgresql.util.PGobject;
 import space.yizhu.kits.DateKit;
 
-import static space.yizhu.record.plugin.activerecord.DbKit.NULL_PARA_ARRAY;
+import static space.yizhu.record.plugin.activerecord.DbConfig.NULL_PARA_ARRAY;
 
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -28,14 +28,14 @@ public class DbPro {
     protected final Config config;
 
     public DbPro() {
-        if (DbKit.config == null) {
+        if (DbConfig.config == null) {
             throw new RuntimeException("The main config is null, initialize ActiveRecordPlugin first");
         }
-        this.config = DbKit.config;
+        this.config = DbConfig.config;
     }
 
     public DbPro(String configName) {
-        this.config = DbKit.getConfig(configName);
+        this.config = DbConfig.getConfig(configName);
         if (this.config == null) {
             throw new IllegalArgumentException("Config not found by configName: " + configName);
         }
@@ -64,7 +64,7 @@ public class DbPro {
                 result.add(rs.getObject(1));
             }
         }
-        DbKit.close(rs, pst);
+        DbConfig.close(rs, pst);
         return result;
     }
 
@@ -243,7 +243,7 @@ public class DbPro {
         PreparedStatement pst = conn.prepareStatement(sql);
         config.dialect.fillStatement(pst, paras);
         int result = pst.executeUpdate();
-        DbKit.close(pst);
+        DbConfig.close(pst);
         return result;
     }
 
@@ -270,7 +270,7 @@ public class DbPro {
         config.dialect.fillStatement(pst, paras);
         ResultSet rs = pst.executeQuery();
         List<Record> result = config.dialect.buildRecordList(config, rs);    
-        DbKit.close(rs, pst);
+        DbConfig.close(rs, pst);
         return result;
     }
 
@@ -493,7 +493,7 @@ public class DbPro {
         config.dialect.fillStatement(pst, paras);
         int result = pst.executeUpdate();
         config.dialect.getRecordGeneratedKey(pst, record, pKeys);
-        DbKit.close(pst);
+        DbConfig.close(pst);
         return result >= 1;
     }
 
@@ -755,7 +755,7 @@ public class DbPro {
             for (int k = 0; k < r.length; k++)
                 result[pointer++] = r[k];
         }
-        DbKit.close(pst);
+        DbConfig.close(pst);
         return result;
     }
 
@@ -850,7 +850,7 @@ public class DbPro {
             for (int k = 0; k < r.length; k++)
                 result[pointer++] = r[k];
         }
-        DbKit.close(pst);
+        DbConfig.close(pst);
         return result;
     }
 
@@ -906,7 +906,7 @@ public class DbPro {
             for (int k = 0; k < r.length; k++)
                 result[pointer++] = r[k];
         }
-        DbKit.close(st);
+        DbConfig.close(st);
         return result;
     }
 

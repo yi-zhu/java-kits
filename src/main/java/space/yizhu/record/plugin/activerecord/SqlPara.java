@@ -33,7 +33,7 @@ public class SqlPara implements Serializable {
 
     public Object[] getPara() {
         if (paraList == null || paraList.size() == 0) {
-            return DbKit.NULL_PARA_ARRAY;
+            return DbConfig.NULL_PARA_ARRAY;
         } else {
             return paraList.toArray(new Object[paraList.size()]);
         }

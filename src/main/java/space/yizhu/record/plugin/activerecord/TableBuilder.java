@@ -30,7 +30,7 @@ class TableBuilder {
                 temp = table;
                 doBuild(table, conn, config);
                 tableMapping.putTable(table);
-                DbKit.addModelToConfigMapping(table.getModelClass(), config);
+                DbConfig.addModelToConfigMapping(table.getModelClass(), config);
             }
         } catch (Exception e) {
             if (temp != null) {

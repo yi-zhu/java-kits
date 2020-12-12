@@ -6,10 +6,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class DateKit {
 
@@ -43,7 +40,10 @@ public class DateKit {
 
     public static Date parseDate(String date) {
         try {
-            return DateUtils.parseDate(date, new String[]{"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss"});
+            return DateUtils.parseDate(date, "yyyy-MM","yyyyMM","yyyy/MM","yyyyMMdd"
+                    ,"yyyy-MM-dd","yyyy/MM/dd","yyyyMMddHHmmss","yyyy-MM-ddHH:mm:ss","yyyy/MM/ddHH:mm:ss"
+                    ,"MMM dd, yyyy hh:mm:ss a" ,"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd HH:mm:ss.S"
+                    ,"EEE MMM dd HH:mm:ss zzz yyyy");
         } catch (ParseException e) {
              SysKit.print(e);
         }
@@ -141,7 +141,7 @@ public class DateKit {
     }
 
     public static Timestamp string2Timestamp(String string) {
-        return new Timestamp(String2Date(string).getTime());
+        return new Timestamp(Objects.requireNonNull(parseDate(string)).getTime());
     }
 
     //时间戳转日期格式字符串
@@ -154,4 +154,33 @@ public class DateKit {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         return sdf.format(new Date(Long.valueOf(seconds)));
     }
+
+    public static void main(String[] args) {
+        String s = "2021-12-04 09:18:52.0";
+        parseDate(s);
+    }
+
+
+    private final String README = "\n" +
+            "字母\t描述\t示例\n" +
+            "G\t纪元标记\tAD\n" +
+            "y\t四位年份\t2001\n" +
+            "M\t月份\tJuly or 07\n" +
+            "d\t一个月的日期\t10\n" +
+            "h\t A.M./P.M. (1~12)格式小时\t12\n" +
+            "H\t一天中的小时 (0~23)\t22\n" +
+            "m\t分钟数\t30\n" +
+            "s\t秒数\t55\n" +
+            "S\t毫秒数\t234\n" +
+            "E\t星期几\tTuesday\n" +
+            "D\t一年中的日子\t360\n" +
+            "F\t一个月中第几周的周几\t2 (second Wed. in July)\n" +
+            "w\t一年中第几周\t40\n" +
+            "W\t一个月中第几周\t1\n" +
+            "a\tA.M./P.M. 标记\tPM\n" +
+            "k\t一天中的小时(1~24)\t24\n" +
+            "K\t A.M./P.M. (0~11)格式小时\t10\n" +
+            "z\t时区\tEastern Standard Time\n" +
+            "'\t文字定界符\tDelimiter\n" +
+            "\"\t单引号\t`";
 }

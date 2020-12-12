@@ -190,6 +190,11 @@ public class RedisKit {
      * @return true 成功 false 失败
      */
     public static boolean hmset(String key, Map<String,Object> map){
+        for (Map.Entry<String, Object> st : map.entrySet()) {
+            if (null==st.getKey()||null==st.getValue()){
+                map.remove(st.getKey());
+            }
+        }
         try {
             redisTemplate.opsForHash().putAll(key, map);
             return true;
@@ -210,6 +215,11 @@ public class RedisKit {
      */
     public static boolean hmset(String key, Map<String,Object> map, long time){
         try {
+            for (Map.Entry<String, Object> st : map.entrySet()) {
+                if (null==st.getKey()||null==st.getValue()){
+                    map.remove(st.getKey());
+                }
+            }
             redisTemplate.opsForHash().putAll(key, map);
             if(time>0){
                 expire(key, time);

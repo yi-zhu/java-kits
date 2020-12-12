@@ -129,15 +129,6 @@ public class CharKit {
         return ret;
     }
 
-    public String toStrings(String a) {
-        String[] arr = a.split("\\s+");
-        String sss = "";
-        for (String ss : arr) {
-            sss = sss + BinstrToChar(ss);
-        }
-        return sss;
-    }
-
     //double 保留两位小数
     public static String doubleKeepDecimal(Double dol) {
         try {
@@ -177,10 +168,53 @@ public class CharKit {
         byte[] bytes = msgDigest.digest();
         return new String(encodeHex(bytes));
     }
-
-
-    public static void main(String[] args) {
-        SysKit.print(stringToHex("hello"));
-        ;
+    public static boolean isNotNull(String str){
+        if (null==str||str.length()==0||str.equals("null")||str.equals("undefined")){
+            return false;
+        } else return true;
     }
+    public static String catTail(String str) {
+        return catTail(str, 1);
+    }
+    public static String catTail(String str, int len) {
+        if (null == str) {
+            return null;
+        }
+        if (len < 0) {
+            return str;
+        }
+
+        if (len > str.length())
+            return "";
+        else
+            return str.substring(0, str.length() - len);
+    }
+    public static String catHead(String str) {
+        return catHead(str, 1);
+    }
+    public static String catHead(String str, int len) {
+        if (null == str) {
+            return null;
+        }
+        if (len < 0) {
+            return str;
+        }
+
+        if (len > str.length())
+            return "";
+        else
+            return str.substring(len);
+    }
+
+
+
+    public String toStrings(String a) {
+        String[] arr = a.split("\\s+");
+        String sss = "";
+        for (String ss : arr) {
+            sss = sss + BinstrToChar(ss);
+        }
+        return sss;
+    }
+
 }

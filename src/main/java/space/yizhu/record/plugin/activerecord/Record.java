@@ -19,7 +19,7 @@ public class Record implements Serializable {
 
     
     public Record setContainerFactoryByConfigName(String configName) {
-        Config config = DbKit.getConfig(configName);
+        Config config = DbConfig.getConfig(configName);
         if (config == null)
             throw new IllegalArgumentException("Config not found: " + configName);
 
@@ -47,10 +47,10 @@ public class Record implements Serializable {
     @SuppressWarnings("unchecked")
     public Map<String, Object> getColumns() {
         if (columns == null) {
-            if (DbKit.config == null)
-                columns = DbKit.brokenConfig.containerFactory.getColumnsMap();
+            if (DbConfig.config == null)
+                columns = DbConfig.brokenConfig.containerFactory.getColumnsMap();
             else
-                columns = DbKit.config.containerFactory.getColumnsMap();
+                columns = DbConfig.config.containerFactory.getColumnsMap();
         }
         return columns;
     }

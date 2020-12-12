@@ -2,7 +2,9 @@
 
 package space.yizhu.kits;
 
+import space.yizhu.bean.LogModel;
 import space.yizhu.record.log.Log;
+import space.yizhu.record.plugin.activerecord.Model;
 
 /**
  * LogKit.
@@ -11,6 +13,12 @@ public class LogKit {
 
     private static class Holder {
         private static Log log = Log.getLog(LogKit.class);
+    }
+
+
+    public static void  saveLog(){
+        Model log= LogModel.me;
+
     }
 
     /**
@@ -88,5 +96,8 @@ public class LogKit {
     public static boolean isFatalEnabled() {
         return Holder.log.isFatalEnabled();
     }
+
+
+
 }
 

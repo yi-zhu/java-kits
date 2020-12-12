@@ -79,7 +79,7 @@ public class Config {
 
     
     public Config(String name, DataSource dataSource, Dialect dialect) {
-        this(name, dataSource, dialect, false, false, DbKit.DEFAULT_TRANSACTION_LEVEL, IContainerFactory.defaultContainerFactory, new EhCache());
+        this(name, dataSource, dialect, false, false, DbConfig.DEFAULT_TRANSACTION_LEVEL, IContainerFactory.defaultContainerFactory, new EhCache());
     }
 
     private Config() {
@@ -105,7 +105,7 @@ public class Config {
         ret.dialect = new MysqlDialect();
         ret.showSql = false;
         ret.devMode = false;
-        ret.transactionLevel = DbKit.DEFAULT_TRANSACTION_LEVEL;
+        ret.transactionLevel = DbConfig.DEFAULT_TRANSACTION_LEVEL;
         ret.containerFactory = IContainerFactory.defaultContainerFactory;
         ret.cache = new EhCache();
         return ret;
