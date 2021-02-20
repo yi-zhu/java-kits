@@ -120,8 +120,8 @@ public class AesKit {
 
     public static void main(String[] args) {
         String pw = "测试";
-        String pwhast=ToolKit.toMd5(pw);
-        String salt=AesKit.getAesKey();
+        String pwhast="测试";
+        String salt=ToolKit.toMd5("张三");
         SysKit.print(pwhast);
         SysKit.print(salt);
         String ret = encrypt(pwhast, salt);
