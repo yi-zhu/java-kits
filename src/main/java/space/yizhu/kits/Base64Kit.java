@@ -16,14 +16,15 @@
 
 package space.yizhu.kits;
 
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Base64Utils;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Base64;
 
 public class Base64Kit {
 
@@ -182,12 +183,23 @@ public class Base64Kit {
             return false;
         }
         String savePath = System.getProperty("user.dir");
-        base64Code = base64Code.substring(base64Code.indexOf("data:"));
-        try {
 
-            String postfix = base64Code.substring(base64Code.indexOf("/"), base64Code.indexOf(";"));
-            byte[] buffer = new BASE64Decoder().decodeBuffer(base64Code);
-            FileOutputStream out = new FileOutputStream(savePath + "/" + name + "." + postfix);
+        try {
+            byte[] buffer;
+            FileOutputStream out;
+            if (base64Code.startsWith("data:")){
+                base64Code = base64Code.substring(base64Code.indexOf("data:"));
+                String postfix = base64Code.substring(base64Code.indexOf("/"), base64Code.indexOf(";"));
+                 buffer = Base64.getDecoder().decode(base64Code);
+                out = new FileOutputStream(savePath + "/" + name + "." + postfix);
+            }else {
+                StringUtils.isNoneBlank(base64Code);
+                if (base64Code.contains("\\n")) {
+                    base64Code= base64Code.replaceAll("\\\\n","");
+                }
+                buffer = new BASE64Decoder().decodeBuffer(base64Code);
+                 out = new FileOutputStream(savePath + "/" + name );
+            }
             out.write(buffer);
             out.close();
             return true;
@@ -198,7 +210,11 @@ public class Base64Kit {
     }
 
 
+
     public static void main(String[] args) {
+
+        String base=FileKit.read(new File("D:/work/unicom/tep/base"));
+        decoder2File(base,"电子证照.pdf");
         String data = "";
 
         try {

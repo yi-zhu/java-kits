@@ -5,14 +5,21 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.*;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
@@ -24,6 +31,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -33,20 +42,29 @@ public class HttpKit {
 
 
     private static CloseableHttpClient httpclient = null;
-
+    public static String load(String url){
+        return load(url, null, "GET");
+    }
+    public static String load(String url,Object params){
+        return load(url, params, "POST");
+    }
     //    同步调用
-    public static String load(String url, Object params) {
+  /*  public static String load(String url, Object params,String method) {
 //        System.setSecurityManager(new RMISecurityManager());
         StringBuilder resultStr = new StringBuilder();
         try {
 
             URL restURL = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) restURL.openConnection();
-            conn.setRequestMethod("POST");
+            if (null==method||method.isEmpty())
+                method = "POST";
+            conn.setRequestMethod(method.toUpperCase());
 
             conn.setDoOutput(true);
             conn.setAllowUserInteraction(false);
-//        conn.setUseCaches(true);
+        conn.setUseCaches(true);
+        if (params!=null){
+
             OutputStream os = conn.getOutputStream();
             byte[] bytes;
             if (params != null)
@@ -59,6 +77,8 @@ public class HttpKit {
             os.write(bytes, 0, bytes.length);
             os.flush();
             os.close();
+        }
+
             BufferedReader bReader = new BufferedReader(new InputStreamReader(
                     conn.getInputStream()));
 
@@ -72,8 +92,50 @@ public class HttpKit {
              SysKit.print(e);
         }
         return resultStr.toString();
-    }
+    }*/
+    public static String load(String url, Object params,String method) {
 
+        StringBuilder resultStr = new StringBuilder();
+        try {
+
+            URL restURL = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) restURL.openConnection();
+            if (null==method||method.isEmpty())
+                method = "POST";
+            conn.setRequestMethod(method.toUpperCase());
+            conn.setDoOutput(true);
+            conn.setAllowUserInteraction(false);
+            conn.setUseCaches(true);
+            if (params!=null) {
+                OutputStream os = conn.getOutputStream();
+                byte[] bytes;
+                if (params != null)
+                    if (params instanceof byte[])
+                        bytes = (byte[]) params;
+                    else if (params instanceof String)
+                        bytes = params.toString().getBytes();
+                    else
+                        bytes = JSONUtils.toJSONString(params).getBytes();
+                else
+                    bytes = new byte[0];
+                os.write(bytes, 0, bytes.length);
+                os.flush();
+                os.close();
+            }
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+
+            String line;
+
+            while (null != (line = bReader.readLine())) {
+                resultStr.append(line);
+            }
+            bReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return resultStr.toString();
+    }
 
     public static String httpPost(String url, Map<String, Object> map,String pubkey) {
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -266,12 +328,65 @@ public class HttpKit {
         }
         return result;
     }
+    private static CloseableHttpClient getHttpsClient() {
+        RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.<ConnectionSocketFactory>create();
+        ConnectionSocketFactory plainSF = new PlainConnectionSocketFactory();
+        registryBuilder.register("http", plainSF);
+        // 指定信任密钥存储对象和连接套接字工厂
+        try {
+            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            // 信任任何链接
+            TrustStrategy anyTrustStrategy = new TrustStrategy() {
 
-    public static String httpGet(String url,Map<String,Object> head ) throws UnsupportedEncodingException {
+                @Override
+                public boolean isTrusted(java.security.cert.X509Certificate[] arg0, String arg1) throws java.security.cert.CertificateException {
+                    // TODO Auto-generated method stub
+                    return true;
+                }
+            };
+            SSLContext sslContext = SSLContexts.custom().useTLS().loadTrustMaterial(trustStore, anyTrustStrategy).build();
+            LayeredConnectionSocketFactory sslSF = new SSLConnectionSocketFactory(sslContext, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            registryBuilder.register("https", sslSF);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException(e);
+        } catch (KeyManagementException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        Registry<ConnectionSocketFactory> registry = registryBuilder.build();
+        // 设置连接管理器
+        PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(registry);
+        // 构建客户端
+        return HttpClientBuilder.create().setConnectionManager(connManager).build();
+    }
+    public static String httpGet(String url,Map<String,Object> head ) throws UnsupportedEncodingException, NoSuchAlgorithmException, KeyManagementException {
         //1.获得一个httpclient对象
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        //2.生成一个get请求
+        CloseableHttpClient httpclient;
+        url = url.replaceAll(" ", "");
+        if (url.startsWith("https")){
+
+            httpclient=getHttpsClient();
+        }else {
+            httpclient = HttpClients.createDefault();
+        }
+        // 配置信息
+        RequestConfig requestConfig = RequestConfig.custom()
+                // 设置连接超时时间(单位毫秒)
+                .setConnectTimeout(7000)
+                // 设置请求超时时间(单位毫秒)
+                .setConnectionRequestTimeout(7000)
+                // socket读写超时时间(单位毫秒)
+                .setSocketTimeout(7000)
+                // 设置是否允许重定向(默认为true)
+                .setRedirectsEnabled(true).build();
         HttpGet httpget = new HttpGet(URLEncoder.encode(url,"utf-8"));
+
+        // 将上面的配置信息 运用到这个Get请求里
+        httpget.setConfig(requestConfig);
+
+
+        //2.生成一个get请求
         CloseableHttpResponse response = null;
         if (null!=head&&head.size()>0){
             for (Map.Entry<String, Object> st:head.entrySet()) {
@@ -307,28 +422,36 @@ public class HttpKit {
 
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String url = " https://wq.jd.com/deal/msubmit/confirm?paytype=0&paychannel=1&action=1&reg=1&type=0&token2=EF1C95CA274CE44243C283C6C94143E4&dpid=&skulist=100016046842&scan_orig=&gpolicy=&platprice=0&ship=0|65|4|||0||1||2020-11-28|09:00-15:00|{%221%22:%221%22,%22161%22:%220%22,%22237%22:%221%22,%22278%22:%220%22,%2230%22:%221%22,%2235%22:%221%22}|1|||||0||0||0|2,-404966545,889164203320598528,889164203358347264,101612_889164233934766081,101613_889164234014457856||&pick=&savepayship=0&valuableskus=100016046842,1,409900,678&commlist=100016046842,,1,100016046842,1,0,0&sceneval=2&setdefcoupon=0&r=0.826552690411303&callback=confirmCbF&traceid=1058799336827598629";
+
+       SysKit.print( load("http://yizhu.space:22333/whkfb/callback/gethtxx",new HashMap<String,String
+               >(){
+           {
+               put("htbh","201800037408");
+               put("vcode","1234");
+           }
+       }));
+if (true)
+    return;
+        load("http://117.184.199.40:8877/authenticationService/getLicencePdf.do?uniscid=ZZJGD1609314154606&pdfcode=231003Fabcd31110200000001061511eykuENfwF1A4B38D0",null,"get");
+        String url = " https://www.baidu.com";
 
         Map header = new HashMap(){
             {
-                put("authority", "wq.jd.com");
+                put("cookie", "deviceid=wdi10.3c09f00bee14c4c5d3bad86b3ee434b5c75fe59afcc33d3c4dbdc464f73b3a44; appidstack=101; XLA_CI=571d3a3b9706ae8c1b31a6bd5c40d924; xl_fp_rt=1609291477909; isvip=1; order=; score=119288; usrname=xiuxingzhe2; userid=72828577; upgrade=; logintype=; creditkey=ck0.Q9O-6tfW4LAsLsflhmXfz7zvpVRfo-6c5KfJDv8Rq8WCOuSKU3ghHK4rDao357Fx9jMVsnfXLypI8lBTZ6ja1sNk1P1o8HFIhYlFN_wWNMQWtS5va45KWqLV0jvC90xr; sessionid=ws001.E9380E1D30AEF0B39C67F380DAE367DF; usernewno=680732606; state=0; version=1; usernick=%E5%80%9A%E7%AB%B9; usertype=0; klb_pc_pcc=0; verify_type=; _x_t_=0; flowid=4c3b2539-d6bd-4201-84b3-8e0f9589024e; aidfrom=xl_personal_self_btn2; referfrom=pc_xl_personal_center; XLA_RFundefined=pc_xl_personal_center; error=appid_notmatch; error_description=\"Application name does not match business tracking number\"; errdesc=5bqU55So56iL5bqP5ZCN5ZKM5Lia5Yqh6Lef6Liq56CB5LiN5Yy56YWNWzExXQ==; VERIFY_KEY=2D4074F15221F5234B90D6CF3759DF64848604D15BAF1C21E7786BFE19A9E93E");
                 put("method", "GET");
-                put("path", "/deal/msubmit/confirm?paytype=0&paychannel=1&action=1&reg=1&type=0&token2=EF1C95CA274CE44243C283C6C94143E4&dpid=&skulist=100016046842&scan_orig=&gpolicy=&platprice=0&ship=0|65|4|||0||1||2020-11-28|09:00-15:00|{%221%22:%221%22,%22161%22:%220%22,%22237%22:%221%22,%22278%22:%220%22,%2230%22:%221%22,%2235%22:%221%22}|1|||||0||0||0|2,-404966545,889164203320598528,889164203358347264,101612_889164233934766081,101613_889164234014457856||&pick=&savepayship=0&valuableskus=100016046842,1,409900,678&commlist=100016046842,,1,100016046842,1,0,0&sceneval=2&setdefcoupon=0&r=0.826552690411303&callback=confirmCbF&traceid=1058799336827598629");
-                put("scheme", "https");
-                put("accept", "*/*");
-                put("accept-encoding", "gzip, deflate, br");
-                put("accept-language", "zh-CN,zh;q=0.9");
-                put("cookie", "shshshfpa=90cf3218-af8d-9aa4-711d-22a537d85cae-1554279661; shshshfpb=coeIv8hADM%2FsczHzR4yKkFw%3D%3D; pinId=v9GcfTThBvGUps4Gaq4KtA; unick=%E5%80%9A%E7%AB%B9; _tp=mm1ult5xzJeudO3lJ5b9Dg%3D%3D; _pst=13406371157_p; __jdu=1775236543; pin=13406371157_p; user-key=bab3ee3e-66e6-498c-8314-0c0644096ebb; areaId=13; ipLocation=%u5c71%u4e1c; ipLoc-djd=13-1000-40488-54434.138125605; mt_xid=V2_52007VwMUVFlbUF0bTBtsAjULG1ZeUVpGHBwbDBliCxVQQQtaWhZVTQhSZQITU1xbWl0eeRpdBmYfElJBWFtLH0gSXQFsAhFiX2hRahxIH1QAYjMQWl9Y; cn=39; PCSYCityID=CN_370000_370100_370102; TrackID=1-HvrvFQwpS2pthIfNJz7O_7XDpRncDST9MMLs5TeWB2o1A8eK1KnKwg3p0h2ZBetFHYUkZsV6EqHbt0Qm_6FMhsVvSUV9MiGZI6HgeQcIho; ceshi3.com=201; thor=9ADEF46F1E1A23E6570733F20C328450637749E5D62783D56886A74AAEF11A73BC77FBE10B2F6B7F1F5F46FBE8B080F67126D3352D4F3CA1A96ABE811BBAAC5C5C05533BB366BC9BF818635657A816EC4B267CB7A16ABF348810AA923688D7E499145CFE09C5A4E426E02ABDF43CF6F51031CA9CC084DFFBA8CBD555B0E68730E9163880270F29BEBEBA15E8BDA0604D; CCC_SE=ADC_efQ7APEFfj01po1InD1tJw5Y7lQXPuq2TDD1xY9xHWZoRyKan5YtlYLL9UAFwB2n%2bbwrycqIaGE7f4F0YvVqh3657HJrpzwIYPdOYADrOc8z3%2fppazwes15kfLGtMRzVg43vkBo2zwzAO4eXHN3KaCQYiB4pIBR%2finY4M2jKw1PpdyGHJ03zMqVTeYk4MoZ%2bckVSRYFScVbzOFWVw7lpnLxokNBv3KGszaGldOBXqS0YihoXMGOW4sR9U0fTOQmzkUrTrR4v4HZ2jhAXqxe6yyhUkOlQB8GFLyHqnO73ntLoF23PEOH5z1XG5RowWfah76pcjfmBlHOev5qko3oNIZvakhTeHMmVP78vPCe2g4%2bAbAnvhv8KzlUROGZuFRFWee0dGRSAeaMgjdetsS1iEuil9cCdfH1yCuvZdQMgrwFC9bqYRwnlN6dkBABD5pAi6mOInoyZVs996DlWplpcnmx9ROrLclNNkZSwcLAIAXUcjs42vfT%2b7a39NRWDAGI8Knn0YjZmuqNMi9HtC%2bAc%2fZGmNvwGsPwnd0DqrINOmoBd2oXKu5xrNwgJUoMiuWMCcXEf8kpsqKrkxAefqqzFc3rr4haMQRpgkuhkblecWlt8vnKg958wCXhXV1wYz61V; unpl=V2_ZzNtbRUAQh0nDUBReBALDWJTEVRKBRBAdwxAACgRCAJkA0FdclRCFnQURlRnGloUZwcZXENcRhZFCEVkexhdBGYLGlxFUnMlRQtGZHopXANhBxFfRVNGF0U4QVRyKVwEZgISWkNSRBxwC3ZUFUUOR1cBG19DUHMURQhBVnIaXQJkCxBtFDlDFHQJR1V6H10CKgMUW0ZUQRJxDURkeilf; __jda=122270672.1775236543.1554279659.1606459965.1606460374.155; __jdc=122270672; __jdv=122270672|kong|t_1000099064_|tuiguang|ff09c47428f94a289cbd357eb9e621b1|1606460442128; mba_muid=1775236543; visitkey=33445805293610014; 3AB9D23F7A4B3C9B=N77MZGWDDBPAJQM4YLIU67BJJ2TREI6RAHU34RQGEZOJ7LKYCVDVAHNEG3MJAH6ASGVHQBINML6QHWJRKH6CRBHMAI; TrackerID=ZplZZ6UmUxQXkkqkK64k-sE-NkFgCnvwPcGvXH704DM8iyZm3loGWmzzcrv4qtySdIJ4hxIfVCgUcbKFvgcBz0TLBCsbPkhr7-dg-TLhNdw; pt_key=AAJfwKQwADA7xWADIqQB67j_XXvLFH-1DDmwNLU9XN9uBIQ7AE-7Jb3KElQ2FbK9koDFF3KGEGg; pt_pin=13406371157_p; pt_token=oxcr55d2; pwdt_id=13406371157_p; sfstoken=tk01mc7571ce4a8sMXgxKzJWejR1fsn/yOCHmmC36IagMzvnJ/Ri7F3G5NTBbrU5hxvqFRn9ziy4GxfpmGBHvMv1YVYf; cartLastOpTime=1606460466; wq_logid=1606460465_1804289383; wxa_level=1; retina=0; cid=9; wqmnx1=MDEyNjM1MGg6bWNvL3JpYT0xOGFtbnJ0bD0wMzA0MzU5MHovKG9UMG54QVd0LkssZWtoLy4uU2kuNWY3bjI0MllPT1UhSCU%3D; jxsid=16064604645176557141; wq_addr=138125605%7C13_1000_40488_54434%7C%u5C71%u4E1C_%u6D4E%u5357%u5E02_%u5386%u57CE%u533A_%u738B%u820D%u4EBA%u8857%u9053%7C%u5C71%u4E1C%u6D4E%u5357%u5E02%u5386%u57CE%u533A%u738B%u820D%u4EBA%u8857%u9053%u5DE5%u4E1A%u5317%u8DEF%u7965%u6CF0%u57CE%u9633%u5149%u5C1A%u4E1C10%u53F7%u697C1%u5355%u5143302%7C117099945%2C36719627; addrId_1=138125605; mitemAddrId=13_1000_40488_54434; mitemAddrName=%u5C71%u4E1C%u6D4E%u5357%u5E02%u5386%u57CE%u533A%u738B%u820D%u4EBA%u8857%u9053%u5DE5%u4E1A%u5317%u8DEF%u7965%u6CF0%u57CE%u9633%u5149%u5C1A%u4E1C10%u53F7%u697C1%u5355%u5143302; webp=1; __jdb=122270672.10.1775236543|155.1606460374; mba_sid=16064604442686611122431237564.2; __wga=1606460464951.1606460464951.1606460464951.1606460464951.1.1; PPRD_P=UUID.1775236543; jxsid_s_t=1606460465029; jxsid_s_u=https%3A//p.m.jd.com/norder/order.action; sc_width=2560; shshshfp=6d8040b6b212cbf65283dfbb3640ec6c; shshshsID=d7222605edffbe672bffc38900f2ff82_12_1606460465376; cd_eid=N77MZGWDDBPAJQM4YLIU67BJJ2TREI6RAHU34RQGEZOJ7LKYCVDVAHNEG3MJAH6ASGVHQBINML6QHWJRKH6CRBHMAI; __jd_ref_cls=MNeworder_COnlinePay");
-                put("dnt", "1");
-                put("referer", "https://p.m.jd.com/norder/order.action?wareId=100016046842&wareNum=1&enterOrder=true&login=1&r=0.9643570808029407");
-                put("sec-fetch-mode", "no-cors");
-                put("sec-fetch-site", "same-site");
-                put("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.131 Safari/537.36");
+
 
             }
         };
 
-        String ret = httpGet(url, header);
+        String ret = null;
+        try {
+            ret = httpGet(url, header);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
         SysKit.print(ret);
     }
 

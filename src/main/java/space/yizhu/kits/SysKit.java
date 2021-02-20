@@ -11,7 +11,7 @@ public class SysKit {
     private static String prefix = "系统";
     private static Calendar lastDate = Calendar.getInstance();
     private static ConcurrentHashMap<String, Calendar> timeMap = new ConcurrentHashMap<>();
-    private static String packageName = null;
+    private static String packageName = "space.yizhu";
 
     /**
      * Getter for property 'packageName'.
@@ -30,7 +30,9 @@ public class SysKit {
     public static void setPackageName(String packageName) {
         SysKit.packageName = packageName;
     }
-
+public static  String getUserDir(){
+    return System.getProperty("user.dir");
+}
     //--system信息
     public static String getSysInfo(String key) {
         //---print

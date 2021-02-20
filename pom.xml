@@ -5,7 +5,7 @@
 
     <groupId>space.yizhu</groupId>
     <artifactId>kits</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.3</version>
     <packaging>jar</packaging>
     <name>kits</name>
     <description>工具类</description>
@@ -114,8 +114,11 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+<!--            <version>LASET</version>-->
             <version>4.5.13</version>
+
         </dependency>
+
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>

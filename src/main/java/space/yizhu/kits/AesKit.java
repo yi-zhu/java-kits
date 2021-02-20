@@ -1,16 +1,14 @@
 package space.yizhu.kits;
 
-import java.nio.charset.Charset;
-import java.util.Arrays;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 
 /**
- * 完全兼容微信所使用的AES加密方式。
- * aes的key必须是256byte长（比如32个字符），可以使用AesKit.genAesKey()来生成一组key
- *
+ * 兼容微信所使用的AES加密方式。
+ * aes的key必须是256byte长（如32个字符）
  */
 
 public class AesKit {
@@ -20,7 +18,7 @@ public class AesKit {
     private AesKit() {
     }
 
-    public static String genAesKey() {
+    public static String getAesKey() {
         return HashKit.generateSalt(32);
     }
 
@@ -28,8 +26,11 @@ public class AesKit {
         return encrypt(content, aesTextKey.getBytes(UTF_8));
     }
 
-    public static byte[] encrypt(String content, String aesTextKey) {
-        return encrypt(content.getBytes(UTF_8), aesTextKey.getBytes(UTF_8));
+    public static String encrypt(String content, String aesTextKey) {
+        return Base64Kit.encode(encrypt(content.getBytes(UTF_8), aesTextKey.getBytes(UTF_8)));
+    }
+    public static String decrypt(String content, String aesTextKey) {
+        return  new String(decrypt(Base64Kit.decode(content), aesTextKey.getBytes(UTF_8)));
     }
 
     public static byte[] encrypt(String content, String charsetName, String aesTextKey) {
@@ -57,6 +58,7 @@ public class AesKit {
             SecretKeySpec keySpec = new SecretKeySpec(aesKey, "AES");
             IvParameterSpec iv = new IvParameterSpec(aesKey, 0, 16);
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
+//            return cipher.doFinal(PKCS7Encoder.encode());
             return cipher.doFinal(PKCS7Encoder.encode(content));
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -114,5 +116,16 @@ public class AesKit {
             }
             return decrypted;
         }
+    }
+
+    public static void main(String[] args) {
+        String pw = "测试";
+        String pwhast=ToolKit.toMd5(pw);
+        String salt=AesKit.getAesKey();
+        SysKit.print(pwhast);
+        SysKit.print(salt);
+        String ret = encrypt(pwhast, salt);
+      SysKit.print(ret);  ;
+      SysKit.print(decrypt(ret, salt));  ;
     }
 }
