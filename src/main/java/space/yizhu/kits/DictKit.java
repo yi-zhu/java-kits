@@ -15,7 +15,37 @@ public class DictKit {
     private static final SensitiveStringDecoder[] AVAIL_ENCODINGS = {new SensitiveStringDecoder(Charset.forName("UTF-8")),
             new SensitiveStringDecoder(Charset.forName("UTF-16LE")), new SensitiveStringDecoder(Charset.forName("UTF-16BE")),
             new SensitiveStringDecoder(Charset.forName("EUC-JP"))};
-    public static Map<String, String> ld = new HashMap<String, String>();
+    public static Map<String, String> ld = new HashMap<String, String>(){{
+        put("code", "编码");
+        put("name", "名称");
+        put("creator", "创建者");
+        put("mender", "修改人");
+        put("result", "值");
+        put("time", "时间");
+        put("create", "创建");
+        put("create_time", "创建时间");
+        put("modify", "更新");
+        put("modify_time", "更新时间");
+        put("url", "地址");
+        put("sort", "序号");
+        put("parent", "父级");
+        put("type", "类型");
+        put("is", "是否");
+        put("del", "删除");
+        put("group", "群组");
+        put("organization", "组织");
+        put("competence", "权限");
+        put("identity", "证件号");
+        put("telephone", "手机号");
+        put("birthday", "生日");
+        put("gender", "性别");
+        put("password", "密码");
+        put("email", "邮箱");
+        put("main", "主要");
+        put("is_main", "主键");
+        put("is_del", "已删除");
+        put("id", "序列号");
+    }};
 
     public static String getChinese(String english) {
         if (english == null)

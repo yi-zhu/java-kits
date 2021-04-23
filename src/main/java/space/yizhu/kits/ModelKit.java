@@ -62,6 +62,8 @@ public class ModelKit {
         removal = removal.toLowerCase();
         if (removal.endsWith(","))
             removal = removal.substring(0, removal.length() - 1);
+        List<String> removels = Arrays.asList(removal.split(","));
+
         if (null == models) {
             Map<String, Object> map = new HashMap<>();
             map.put("datas", "[]");
@@ -72,6 +74,8 @@ public class ModelKit {
                 return map;
             }
             for (String keyT : keysT) {
+                if (removels.contains(keyT.toLowerCase()))
+                    continue;
                 int index = SortKit.getSort(keyT);
                 indexs.add(index);
                 sortMap.put(index, keyT);
@@ -98,7 +102,7 @@ public class ModelKit {
             map.put("datas", "[]");
             map.put("keys", keysT == null ? "[]" : gson.toJson(keysT));
             for (String keyT : keysT) {
-                if (Arrays.asList(removal.split(",")).contains(keyT.toLowerCase()))
+                if (removels.contains(keyT.toLowerCase()))
                     continue;
                 names.add(DictKit.getChinese(keyT));
                 keysN.add(keyT);
@@ -114,7 +118,7 @@ public class ModelKit {
         Map<String, Object> mapT = maps.get(0);
         for (Object keyT : mapT.keySet()) {
             String keyTS = keyT.toString();
-            if (Arrays.asList(removal.split(",")).contains(keyTS.toLowerCase()))
+            if (removels.contains(keyTS.toLowerCase()))
                 continue;
             if (!keys.equals(keyT.toString())) {
                 int index = SortKit.getSort(keyT.toString());
