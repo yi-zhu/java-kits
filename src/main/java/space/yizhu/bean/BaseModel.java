@@ -3,12 +3,15 @@ package space.yizhu.bean;/* Created by xiuxi on 2017.6.20.*/
 import space.yizhu.record.plugin.activerecord.Model;
 
 /**
+ * <p>BaseModel class.</p>
+ *
  * @author yi
+ * @version $Id: $Id
  */
 public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
+    private final String SPACE = " ";
     private int pageSize = 30;
-    private  final String SPACE=" ";
 /*
 
     public BaseModel() {
@@ -26,10 +29,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Getter for property 'pageSize'.
-     *
-     * @return Value for property 'pageSize'.
-     *//*
+ * Getter for property 'pageSize'.
+ *
+ * @return Value for property 'pageSize'.
+ *//*
 
     public int getPageSize() {
         return pageSize;
@@ -37,10 +40,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Setter for property 'pageSize'.
-     *
-     * @param pageSize Value to set for property 'pageSize'.
-     *//*
+ * Setter for property 'pageSize'.
+ *
+ * @param pageSize Value to set for property 'pageSize'.
+ *//*
 
     public BaseModel<M> setPageSize(int pageSize) {
         this.pageSize = pageSize;
@@ -210,11 +213,11 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * 按id正序查询
-     *
-     * @param pageNum 第几页
-     * @return page
-     *//*
+ * 按id正序查询
+ *
+ * @param pageNum 第几页
+ * @return page
+ *//*
 
     public Page<M> find(int pageNum) {
         return findByKeys(null, null, pageNum, pageSize);
@@ -222,12 +225,12 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * 按id正序查询
-     *
-     * @param pageNum  第几页
-     * @param pageSize 每页行数
-     * @return page
-     *//*
+ * 按id正序查询
+ *
+ * @param pageNum  第几页
+ * @param pageSize 每页行数
+ * @return page
+ *//*
 
     public Page<M> find(int pageNum, int pageSize) {
         setPageSize(pageSize);
@@ -236,12 +239,12 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * 按id正序查询
-     *
-     * @param key   查询关键字
-     * @param value 值
-     * @return 分页数据
-     *//*
+ * 按id正序查询
+ *
+ * @param key   查询关键字
+ * @param value 值
+ * @return 分页数据
+ *//*
 
     public Page<M> find(String key, Object value) {
         return findByKeys(new HashMap<String, Object>() {{
@@ -251,14 +254,14 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * 按id正序查询
-     *
-     * @param key      查询关键字
-     * @param value    值
-     * @param pageNum  第几页
-     * @param pageSize 每页行数
-     * @return 分页数据
-     *//*
+ * 按id正序查询
+ *
+ * @param key      查询关键字
+ * @param value    值
+ * @param pageNum  第几页
+ * @param pageSize 每页行数
+ * @return 分页数据
+ *//*
 
     public Page<M> find(String key, Object value, int pageNum, int pageSize) {
         return findByKeys(new HashMap<String, Object>() {{
@@ -268,12 +271,12 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * 按id倒序查询
-     *
-     * @param key   查询关键字
-     * @param value 值
-     * @return 分页数据
-     *//*
+ * 按id倒序查询
+ *
+ * @param key   查询关键字
+ * @param value 值
+ * @return 分页数据
+ *//*
 
     public Page<M> findNews(String key, Object value) {
         return findByKeys(new HashMap<String, Object>() {{
@@ -286,13 +289,13 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * 按id倒序查询
-     *
-     * @param key     查询关键字
-     * @param value   值
-     * @param pageNum 第几页
-     * @return 分页数据
-     *//*
+ * 按id倒序查询
+ *
+ * @param key     查询关键字
+ * @param value   值
+ * @param pageNum 第几页
+ * @return 分页数据
+ *//*
 
     public Page<M> findNews(String key, Object value, int pageNum) {
         return findByKeys(new HashMap<String, Object>() {{
@@ -305,14 +308,14 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * 按id倒序查询
-     *
-     * @param key      查询关键字
-     * @param value    值
-     * @param pageNum  第几页
-     * @param pageSize 每页行数
-     * @return 分页数据
-     *//*
+ * 按id倒序查询
+ *
+ * @param key      查询关键字
+ * @param value    值
+ * @param pageNum  第几页
+ * @param pageSize 每页行数
+ * @return 分页数据
+ *//*
 
     public Page<M> findNews(String key, Object value, int pageNum, int pageSize) {
         return findByKeys(new HashMap<String, Object>() {{
@@ -326,12 +329,12 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * @param kv       查询条件
-     * @param orderBys 排序条件，true为asc，false为desc
-     * @param pageNum  起始页
-     * @param pageSize 要查询数据
-     * @return 分页数据
-     *//*
+ * @param kv       查询条件
+ * @param orderBys 排序条件，true为asc，false为desc
+ * @param pageNum  起始页
+ * @param pageSize 要查询数据
+ * @return 分页数据
+ *//*
 
     public Page<M> findByKeys(Map<String, Object> kv, Map<String, Boolean> orderBys, int pageNum, int pageSize) {
         Table table = this.getTable();
@@ -544,7 +547,7 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
 
     */
-/* ------------标准表----------- *//*
+    /* ------------标准表----------- *//*
 
 
     private long id;
@@ -594,10 +597,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
     }
     */
 /**
-     * Getter for property 'code'.
-     *
-     * @return Value for property 'code'.
-     *//*
+ * Getter for property 'code'.
+ *
+ * @return Value for property 'code'.
+ *//*
 
     public String getCode() {
         return  code=getStr("code");
@@ -605,10 +608,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Setter for property 'code'.
-     *
-     * @param v Value to set for property 'code'.
-     *//*
+ * Setter for property 'code'.
+ *
+ * @param v Value to set for property 'code'.
+ *//*
 
     public BaseModel<M> setCode(String v) {
         code = v;
@@ -619,10 +622,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Getter for property 'name'.
-     *
-     * @return Value for property 'name'.
-     *//*
+ * Getter for property 'name'.
+ *
+ * @return Value for property 'name'.
+ *//*
 
     public String getName() {
         return name= getStr("name");
@@ -630,10 +633,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Setter for property 'name'.
-     *
-     * @param v Value to set for property 'name'.
-     *//*
+ * Setter for property 'name'.
+ *
+ * @param v Value to set for property 'name'.
+ *//*
 
     public BaseModel<M> setName(String v) {
         name = v;
@@ -643,10 +646,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Getter for property 'creator'.
-     *
-     * @return Value for property 'creator'.
-     *//*
+ * Getter for property 'creator'.
+ *
+ * @return Value for property 'creator'.
+ *//*
 
     public String getCreator() {
         return creator= getStr("creator");
@@ -654,10 +657,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Setter for property 'creator'.
-     *
-     * @param v Value to set for property 'creator'.
-     *//*
+ * Setter for property 'creator'.
+ *
+ * @param v Value to set for property 'creator'.
+ *//*
 
     public BaseModel<M> setCreator(String v) {
         creator = v;
@@ -667,10 +670,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Getter for property 'mender'.
-     *
-     * @return Value for property 'mender'.
-     *//*
+ * Getter for property 'mender'.
+ *
+ * @return Value for property 'mender'.
+ *//*
 
     public String getMender()  {
         return mender= get("mender");
@@ -678,10 +681,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Setter for property 'mender'.
-     *
-     * @param mender Value to set for property 'mender'.
-     *//*
+ * Setter for property 'mender'.
+ *
+ * @param mender Value to set for property 'mender'.
+ *//*
 
     public BaseModel<M> setMender(String mender) {
         this.mender = mender;
@@ -691,10 +694,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Getter for property 'createTime'.
-     *
-     * @return Value for property 'createTime'.
-     *//*
+ * Getter for property 'createTime'.
+ *
+ * @return Value for property 'createTime'.
+ *//*
 
     public Date getCreateTime() {
         return create_time= getDate("create_time");
@@ -702,10 +705,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Setter for property 'createTime'.
-     *
-     * @param createTime Value to set for property 'createTime'.
-     *//*
+ * Setter for property 'createTime'.
+ *
+ * @param createTime Value to set for property 'createTime'.
+ *//*
 
     public BaseModel<M> setCreateTime(Date createTime) {
         this.create_time = createTime;
@@ -715,10 +718,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Getter for property 'modifyTime'.
-     *
-     * @return Value for property 'modifyTime'.
-     *//*
+ * Getter for property 'modifyTime'.
+ *
+ * @return Value for property 'modifyTime'.
+ *//*
 
     public Date getModifyTime() {
         return modify_time= get("modify_time");
@@ -726,10 +729,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Setter for property 'modifyTime'.
-     *
-     * @param modifyTime Value to set for property 'modifyTime'.
-     *//*
+ * Setter for property 'modifyTime'.
+ *
+ * @param modifyTime Value to set for property 'modifyTime'.
+ *//*
 
     public BaseModel<M> setModifyTime(Date modifyTime) {
         modify_time = modifyTime;
@@ -739,10 +742,10 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Getter for property 'isDel'.
-     *
-     * @return Value for property 'isDel'.
-     *//*
+ * Getter for property 'isDel'.
+ *
+ * @return Value for property 'isDel'.
+ *//*
 
     public boolean getIsDel() {
         return is_del=getStr("is_del").equals("1");
@@ -750,11 +753,11 @@ public class BaseModel<M extends BaseModel<M>> extends Model<M> {
 
     */
 /**
-     * Setter for property 'isDel'.
-     *
-     * @param isDel Value to set for property 'isDel'.
-     * @return
-     *//*
+ * Setter for property 'isDel'.
+ *
+ * @param isDel Value to set for property 'isDel'.
+ * @return
+ *//*
 
     public BaseModel<M> setIsDel(boolean isDel) {
         is_del = isDel;

@@ -994,12 +994,30 @@ public abstract class Model<M extends Model> implements Serializable {
         } else {
             return null;
         }
-
-
     }
+    public M findByFirst(Map<String, String> map) {
+        String keys = "", values = "";
+        for (Map.Entry<String, String> set : map.entrySet()) {
+            if (!set.getValue().equals("undefined")) {
+                keys += set.getKey() + ",";
+                values += set.getValue() + ",";
+            }
 
+        }
+        if (keys.endsWith(",")) {
+            keys = keys.substring(0, keys.length() - 1);
+            values = values.substring(0, values.length() - 1);
+            return findByFirst(keys, values);
+
+        } else {
+            return null;
+        }
+    }
+    public List<M> findBy(String key, String value){
+        return findBy(key, value, true);
+    }
     //仿写于byId
-    public List<M> findBy(String key, String value) {
+    public List<M> findBy(String key, String value,boolean isDesc) {
         Table table = this.getTable();
         String[] keys, values;
         if (key == null || value == null) {
@@ -1023,7 +1041,12 @@ public abstract class Model<M extends Model> implements Serializable {
         if (sql.toString().endsWith("and ")) {
             sql.delete(sql.length() - 4, sql.length());
         }
-        String order = "order by id desc";
+        String order;
+        if (isDesc)
+            order= "order by id desc";
+        else
+            order= "order by id ";
+
         sql.append(order);
 //        page--;
 //        sql.append(" LIMIT ").append(limit).append(" OFFSET ").append(page * limit);
@@ -1597,7 +1620,7 @@ public abstract class Model<M extends Model> implements Serializable {
      *
      * @return Value for property 'isDel'.
      */
-    public boolean getIsDel() {
+    public boolean isDel() {
         return is_del=getStr("is_del").equals("1");
     }
 
@@ -1607,13 +1630,21 @@ public abstract class Model<M extends Model> implements Serializable {
      * @param isDel Value to set for property 'isDel'.
      * @return
      */
-    public Model<M> setIsDel(boolean isDel) {
+    public Model<M> setDel(boolean isDel) {
         is_del = isDel;
         set("is_del", isDel ? 1 : 0);
         return this;
     }
 
 
+    public  boolean hasValue(String val){
+        for (Object v : _getAttrValues()) {
+            if (String.valueOf(v).contains(val))
+                return true;
+        }
+        return false;
+
+    };
 
 
 }

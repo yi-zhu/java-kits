@@ -180,6 +180,7 @@ public static  String getUserDir(){
         err(msg);
     }
     private static void err(Throwable msg) {
+        msg.printStackTrace();
         try {
             if (getPackageName() != null) {
                 for (StackTraceElement traceElement : msg.getStackTrace()) {

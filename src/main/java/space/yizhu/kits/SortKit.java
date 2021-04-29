@@ -6,12 +6,16 @@ import java.util.Map;
 public class SortKit {
     public static Map<String, Integer> sortMap = new HashMap<String, Integer>(){{
         put("code", 1);
+        put("id", 0);
         put("name", 2);
         put("parent_code", 11);
         put("type_code", 11);
         put("is_main", 12);
         put("url", 12);
         put("sort", 13);
+
+        put("location", 13);
+        put("address", 12);
 
         put("heads", 12);
         put("params", 13);

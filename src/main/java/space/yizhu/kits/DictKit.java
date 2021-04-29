@@ -45,6 +45,10 @@ public class DictKit {
         put("is_main", "主键");
         put("is_del", "已删除");
         put("id", "序列号");
+        put("picture", "图片");
+        put("pic", "图片");
+        put("image", "图片");
+        put("img", "图片");
     }};
 
     public static String getChinese(String english) {

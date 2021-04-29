@@ -186,7 +186,7 @@ public class ModelKit {
             for (BaseModel model : models) {
                 jsonObject = new JsonObject();
                 jsonObject.addProperty("id", model.getStr("id"));
-                jsonObject.addProperty("name", model.getStr("name"));
+                jsonObject.addProperty("title", model.getStr("name"));
                 jsonObject.addProperty("code", model.getStr("code"));
                 jsonArray.add(jsonObject);
             }
@@ -270,7 +270,7 @@ public class ModelKit {
         return jsonArray;
     }
 
-    public static Map<String, Object> toMap(Model model) {
+    public static Map toMap(Model model) {
         return toMap(model, false);
     }
 

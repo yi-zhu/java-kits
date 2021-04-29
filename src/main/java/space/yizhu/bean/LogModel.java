@@ -1,9 +1,13 @@
 package space.yizhu.bean;/* Created by yi on 11/30/2020.*/
 
 /**
+ * <p>LogModel class.</p>
+ *
  * @author yi
+ * @version $Id: $Id
  */
 public class LogModel extends BaseModel<LogModel> {
+    /** Constant <code>me</code> */
     public static LogModel me = new LogModel().dao();
     public  String code;
     public  int type ;
@@ -22,6 +26,7 @@ public class LogModel extends BaseModel<LogModel> {
      * Setter for property 'params'.
      *
      * @param params Value to set for property 'params'.
+     * @return a {@link space.yizhu.bean.LogModel} object.
      */
     public LogModel setHeads(String params) {
         set("heads", params);
@@ -41,6 +46,7 @@ public class LogModel extends BaseModel<LogModel> {
      * Setter for property 'params'.
      *
      * @param params Value to set for property 'params'.
+     * @return a {@link space.yizhu.bean.LogModel} object.
      */
     public LogModel setType(int params) {
         set("type", params);
@@ -61,6 +67,7 @@ public class LogModel extends BaseModel<LogModel> {
      * Setter for property 'params'.
      *
      * @param params Value to set for property 'params'.
+     * @return a {@link space.yizhu.bean.LogModel} object.
      */
     public LogModel setParams(String params) {
         set("params", params);
@@ -80,6 +87,7 @@ public class LogModel extends BaseModel<LogModel> {
      * Setter for property 'returned'.
      *
      * @param returned Value to set for property 'returned'.
+     * @return a {@link space.yizhu.bean.LogModel} object.
      */
     public LogModel setReturned(String returned) {
         set("returned", returned);
@@ -99,6 +107,7 @@ public class LogModel extends BaseModel<LogModel> {
      * Setter for property 'fromAddr'.
      *
      * @param fromAddr Value to set for property 'fromAddr'.
+     * @return a {@link space.yizhu.bean.LogModel} object.
      */
     public LogModel setFromAddr(String fromAddr) {
         set("from_addr", fromAddr);
@@ -118,6 +127,7 @@ public class LogModel extends BaseModel<LogModel> {
      * Setter for property 'costTime'.
      *
      * @param costTime Value to set for property 'costTime'.
+     * @return a {@link space.yizhu.bean.LogModel} object.
      */
     public LogModel setCostTime(long costTime) {
         set("cost_time", costTime);

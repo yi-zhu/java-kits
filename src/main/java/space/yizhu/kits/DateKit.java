@@ -42,7 +42,7 @@ public class DateKit {
         try {
             return DateUtils.parseDate(date, "yyyy-MM","yyyyMM","yyyy/MM","yyyyMMdd"
                     ,"yyyy-MM-dd","yyyy/MM/dd","yyyyMMddHHmmss","yyyy-MM-ddHH:mm:ss","yyyy/MM/ddHH:mm:ss"
-                    ,"MMM dd, yyyy hh:mm:ss a" ,"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd HH:mm:ss.S"
+                    ,"MMM dd, yyyy hh:mm:ss a" ,"yyyy-MM-dd HH:mm:ss","yyyy-MM-dd HH:mm:ss.S","yyyy-MM-ddHH:mm:ss.S"
                     ,"EEE MMM dd HH:mm:ss zzz yyyy");
         } catch (ParseException e) {
              SysKit.print(e);

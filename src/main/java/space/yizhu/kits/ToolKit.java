@@ -2,7 +2,6 @@ package space.yizhu.kits;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import space.yizhu.bean.LogModel;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -10,7 +9,6 @@ import java.lang.reflect.Modifier;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -394,7 +392,15 @@ public class ToolKit {
         Matcher m = p.matcher(str);
         return m.find();
     }
-
+    public static String jsonToStr(Object obj) {
+        String json = "";
+        try {
+            json= JSONUtils.toJSONString(obj);
+        } catch (Exception e) {
+            System.out.println("mapToJson失败:" + e.getLocalizedMessage());
+        }
+        return json;
+    }
     public static String mapToJson(Map map) {
         String json = "";
         try {
