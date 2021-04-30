@@ -220,7 +220,7 @@ public class ModelKit {
             jsonObject = new JsonObject();
             jsonObject.addProperty("id", baseModel.getStr("id"));
             if (baseModel.get("parent_code") == null || baseModel.get("parent_code").toString().length() < 2) {
-                jsonObject.addProperty("name", baseModel.getStr("name"));
+                jsonObject.addProperty("title", baseModel.getStr("name"));
                 jsonObject.addProperty("code", baseModel.getStr("code"));
                 for (Object code : allCode)
                     jsonObject.addProperty(String.valueOf(code), baseModel.getStr(String.valueOf(code)));
